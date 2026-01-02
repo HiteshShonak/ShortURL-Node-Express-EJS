@@ -1,0 +1,30 @@
+{
+  "name": "url-shortner",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
+    "express": "^5.2.1",
+    "geoip-lite": "^1.4.10",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^7.0.0",
+    "mongoose": "^9.0.2",
+    "nanoid": "^3.3.4",
+    "nodemon": "^3.1.11",
+    "request-ip": "^3.3.0",
+    "user-agent": "^1.0.4",
+    "uuid": "^13.0.0"
+  }
+}
