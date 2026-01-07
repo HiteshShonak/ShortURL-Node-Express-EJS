@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShortURL | Dashboard</title>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/?size=100&id=rLMbY01ZXrPE&format=png&color=000000">
+    
+    <!-- View Transitions API -->
+    <meta name="view-transition" content="same-origin">
+    
+    <!-- Common Styles (shared across all pages) -->
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    
+    <!-- Page-specific Styles -->
+    <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body class="dashboard-body">
+
+    <!-- Include Navbar Partial -->
+    <%- include('partials/navbar', { page: 'dashboard' }) %>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
+        <div class="glass-card">
+            
+            <!-- Content Side -->
+            <div class="content-side">
+                
+                <% if (locals.user) { %>
+                    <!-- Logged In State -->
+                    <h1>
+                        Welcome back, <br>
+                        <span class="highlight"><%= user.name %>!</span>
+                    </h1>
+                    <p class="subtitle">
+                        You are all set. Manage your links, view your analytics, and track your growth.
+                    </p>
+                    <div class="btn-group">
+                        <a href="/" class="btn btn-primary">Create New Link</a>
+                        <a href="/user/logout" class="btn btn-outline btn-logout">Logout</a>
+                    </div>
+                
+                <% } else { %>
+                    <!-- Guest State -->
+                    <h1>Unlock the Power <br>of Your Links.</h1>
+                    <p class="subtitle">
+                        Gain insights into who is clicking your links. Track performance, manage redirects, and optimize your digital reach.
+                    </p>
+                    <div class="btn-group">
+                        <a href="/signup" class="btn btn-primary">Get Started</a>
+                        <a href="/login" class="btn btn-outline">Log In</a>
+                    </div>
+                <% } %>
+
+            </div>
+
+            <!-- Image Side -->
+            <div class="image-side">
+                <svg class="hero-svg" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Browser Window -->
+                    <rect x="20" y="40" width="360" height="240" rx="20" fill="white" stroke="#e5e7eb" stroke-width="2"/>
+                    
+                    <!-- Window Dots -->
+                    <circle cx="50" cy="70" r="4" fill="#ef4444"/>
+                    <circle cx="70" cy="70" r="4" fill="#f59e0b"/>
+                    <circle cx="90" cy="70" r="4" fill="#10b981"/>
+                    
+                    <!-- Chart Line -->
+                    <path d="M50 220 L110 160 L160 190 L240 110 L350 140" 
+                          stroke="#4f46e5" 
+                          stroke-width="4" 
+                          stroke-linecap="round" 
+                          stroke-linejoin="round"/>
+                    
+                    <!-- Chart Fill -->
+                    <path d="M50 220 L110 160 L160 190 L240 110 L350 140 V240 H50 V220Z" 
+                          fill="url(#paint0_linear)" 
+                          opacity="0.2"/>
+                    
+                    <!-- Data Points -->
+                    <circle cx="110" cy="160" r="6" fill="#4f46e5" stroke="white" stroke-width="2"/>
+                    <circle cx="240" cy="110" r="8" fill="#ec4899" stroke="white" stroke-width="2"/>
+                    
+                    <!-- Info Card -->
+                    <rect x="260" y="60" width="100" height="60" rx="10" fill="#4f46e5" fill-opacity="0.9"/>
+                    <rect x="275" y="75" width="40" height="6" rx="3" fill="white" fill-opacity="0.5"/>
+                    <rect x="275" y="90" width="70" height="6" rx="3" fill="white" fill-opacity="0.8"/>
+                    
+                    <!-- Gradient Definition -->
+                    <defs>
+                        <linearGradient id="paint0_linear" x1="200" y1="110" x2="200" y2="240" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#4f46e5"/>
+                            <stop offset="1" stop-color="#4f46e5" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>

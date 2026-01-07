@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://img.icons8.com/?size=100&id=rLMbY01ZXrPE&format=png&color=000000">
+    <title>ShortURL | Login</title>
+    <link rel="stylesheet" href="/css/login.css">
+
+    <style>
+        .auth-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .toast-container {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            width: 100%;
+            margin-bottom: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 9999;
+            border-left: 5px solid #ef4444;
+            box-sizing: border-box;
+        }
+        
+        .toast-icon { color: #ef4444; font-size: 1.2rem; }
+        .toast-msg { color: #333; font-weight: 500; font-size: 0.9rem; }
+
+        .toast-timer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: #ef4444;
+            width: 100%;
+        }
+
+        .animate-bounce { animation: bounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes bounce {
+            0% { transform: translateY(10px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        
+        body { overflow-y: auto; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar-floating">
+        <div class="logo">ShortURL</div>
+        <div class="nav-pills">
+            <a href="/" class="nav-pill">Home</a>
+            <a href="/dashboard" class="nav-pill">Dashboard</a>
+            <a href="/about" class="nav-pill">About</a>
+        </div>
+    </nav>
+
+    <div class="auth-wrapper" style="margin-top: 100px;">
+        
+        <div id="error-toast" class="toast-container">
+            <div class="toast-icon">⚠️</div>
+            <div class="toast-msg" id="error-msg">Error</div>
+            <div id="toast-timer" class="toast-timer"></div>
+        </div>
+
+        <div class="card" style="width: 100%; margin: 0;">
+            <h1>Welcome Back</h1>
+            <p class="subtitle">Enter your details to access your account</p>
+
+            <form id="login-form">
+                <input type="email" id="email" name="email" placeholder="Email Address" required>
+                <input type="password" id="password" name="password" placeholder="Password" required>
+                <button type="submit" id="submit-btn">Sign In</button>
+            </form>
+
+            <div class="footer-link">
+                New here? <a href="/signup">Create an account</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const form = document.getElementById('login-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const toast = document.getElementById('error-toast');
+    const errorMsg = document.getElementById('error-msg');
+    const timerBar = document.getElementById('toast-timer');
+    let timer;
+
+    function showToast(message) {
+        clearTimeout(timer);
+        errorMsg.textContent = message;
+        toast.style.display = 'flex';
+        toast.classList.remove('animate-bounce');
+        void toast.offsetWidth; 
+        toast.classList.add('animate-bounce');
+
+        timerBar.style.transition = 'none';
+        timerBar.style.width = '100%';
+        setTimeout(() => {
+            timerBar.style.transition = 'width 3000ms linear';
+            timerBar.style.width = '0%';
+        }, 10);
+
+        timer = setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3000);
+    }
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const originalText = submitBtn.innerText;
+        submitBtn.innerText = "Signing In...";
+        submitBtn.disabled = true;
+
+        const formData = {
+            email: form.email.value,
+            password: form.password.value
+        };
+
+        try {
+            // TARGET: /user/login (Matches router.post('/login'))
+            const res = await fetch('/user/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            
+            const contentType = res.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                const text = await res.text();
+                console.error("Server HTML Response:", text);
+                throw new Error("Server Error: Received HTML instead of JSON.");
+            }
+
+            const data = await res.json();
+
+            if (res.ok) {
+                window.location.href = data.redirect || '/';
+            } else {
+                // Display EXACT error from controller
+                showToast(data.error || 'Login failed');
+            }
+        } catch (err) {
+            console.error(err);
+            showToast(err.message || 'Network Error');
+        } finally {
+            submitBtn.innerText = originalText;
+            submitBtn.disabled = false;
+        }
+    });
+    </script>
+</body>
+</html>
