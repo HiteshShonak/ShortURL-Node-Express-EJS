@@ -1,0 +1,7 @@
+<!-- Reusable Chart Card Wrapper -->
+<div class="chart-card" style="<%= style || '' %>">
+    <div class="chart-header"><%= title %></div>
+    <div style="flex: 1; position: relative; min-height: <%= minHeight || '300px' %>; <%= canvasStyle || '' %>">
+        <canvas id="<%= canvasId %>"></canvas>
+    </div>
+</div>
