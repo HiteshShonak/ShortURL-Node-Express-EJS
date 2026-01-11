@@ -1,0 +1,53 @@
+<!-- ===== HEATMAP & GEOGRAPHIC BREAKDOWN ===== -->
+<div class="charts-row">
+    <div class="chart-card" style="flex: 2; padding: 0; overflow: hidden; min-height: 400px; position: relative;">
+        <!-- Map Header with Control Buttons -->
+        <div class="map-header">
+            <h3 class="map-title">Live Traffic Map</h3>
+            
+            <div class="map-controls">
+                <button onclick="openViewModeModal()" class="map-btn" title="Toggle View Mode">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="2"/>
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    <span class="map-btn-label" id="viewModeLabel">Heatmap</span>
+                </button>
+                
+                <button onclick="openDataSourceModal()" class="map-btn" title="Change Data Source">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="map-btn-label" id="dataSourceLabel">Activity</span>
+                </button>
+                
+                <button onclick="openMapGuideModal()" class="map-btn" title="Map Guide">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="map-btn-label">Guide</span>
+                </button>
+            </div>
+        </div>
+        
+        <div id="regions_div" style="width: 100%; height: 100%; min-height: 350px; z-index: 1;"></div>
+        
+        <!-- Color Legend Bar -->
+        <div id="heatmapLegend" style="position: absolute; bottom: 20px; left: 20px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 12px 16px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); z-index: 1000; font-family: 'Segoe UI', system-ui, sans-serif; min-width: 240px; display: none;">
+            <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;" id="legendTitle">Activity Intensity</div>
+            <div style="position: relative; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 6px;" id="legendGradient"></div>
+            <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748b; font-weight: 600;">
+                <span id="legendMin">0</span>
+                <span id="legendMid" style="text-align: center; flex: 1;"></span>
+                <span id="legendMax">100</span>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../analytics/geo-list', { 
+        title: 'Top Countries', 
+        listId: 'countryList',
+        maxHeight: '450px'
+    }) %>
+</div>

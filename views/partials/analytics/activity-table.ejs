@@ -1,0 +1,107 @@
+<!-- ===== RECENT ACTIVITY TABLE ===== -->
+<div class="table-card">
+    <div class="table-header">
+        <h3>Recent Activity Log</h3>
+    </div>
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date & Time</th>
+                    <th>Location</th>
+                    <th>Source</th>
+                    <th>Device</th>
+                    <th>IP Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (recentActivity && recentActivity.length > 0) { %>
+                    <% recentActivity.forEach(entry => { %>
+                        <tr>
+                            <td>
+                                <div style="font-weight: 600; color: var(--text-main);">
+                                    <%= new Date(entry.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) %>
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">
+                                    <%= new Date(entry.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) %>
+                                </div>
+                            </td>
+                            <td>
+                                <% if (entry.location && entry.location !== 'Unknown') { %>
+                                    <div style="display: flex; align-items: center; gap: 6px;">
+                                        <i class="ph ph-map-pin" style="color: #ef4444;"></i>
+                                        <span><%= entry.location %></span>
+                                    </div>
+                                <% } else { %>
+                                    <span style="color: #9ca3af; font-size: 0.9rem;">Unknown</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <% 
+                                    let ref = entry.referrer || 'Direct';
+                                    let badgeColor = '#f3f4f6';
+                                    let textColor = '#4b5563';
+                                    let icon = 'ph-link';
+                                    
+                                    if(ref.toLowerCase().includes('whatsapp')) {
+                                        badgeColor = '#dcfce7'; textColor = '#166534'; icon = 'ph-whatsapp-logo'; ref = 'WhatsApp';
+                                    } else if(ref.toLowerCase().includes('telegram')) {
+                                        badgeColor = '#e0f2fe'; textColor = '#075985'; icon = 'ph-telegram-logo'; ref = 'Telegram';
+                                    } else if(ref.toLowerCase().includes('linkedin')) {
+                                        badgeColor = '#dbeafe'; textColor = '#1e40af'; icon = 'ph-linkedin-logo'; ref = 'LinkedIn';
+                                    } else if(ref.toLowerCase().includes('google')) {
+                                        badgeColor = '#ffedd5'; textColor = '#9a3412'; icon = 'ph-google-logo'; ref = 'Google';
+                                    }
+                                %>
+                                <span style="display: inline-flex; align-items: center; gap: 4px; background: <%= badgeColor %>; color: <%= textColor %>; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-transform: capitalize;">
+                                    <i class="ph <%= icon %>"></i>
+                                    <%= ref %>
+                                </span>
+                            </td>
+                            <td>
+                                <% 
+                                    let deviceClass = 'device-desktop';
+                                    let deviceIcon = 'ph-desktop';
+                                    if (entry.device === 'Mobile') { 
+                                        deviceClass = 'device-mobile'; 
+                                        deviceIcon = 'ph-device-mobile'; 
+                                    } else if (entry.device === 'Tablet') { 
+                                        deviceClass = 'device-tablet'; 
+                                        deviceIcon = 'ph-device-tablet'; 
+                                    } else if (entry.device === 'Bot') { 
+                                        deviceClass = 'device-bot'; 
+                                        deviceIcon = 'ph-robot'; 
+                                    }
+                                %>
+                                <span class="device-badge <%= deviceClass %>">
+                                    <i class="ph <%= deviceIcon %>"></i>
+                                    <%= entry.device %>
+                                </span>
+                            </td>
+                            <td>
+                                <span style="font-family: monospace; color: var(--text-muted); background: #f8fafc; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                                    <% 
+                                        let ip = entry.ip || 'Unknown';
+                                        if(ip.includes('.')) {
+                                            let parts = ip.split('.');
+                                            if(parts.length === 4) {
+                                                ip = parts[0] + '.' + parts[1] + '.xx.xx';
+                                            }
+                                        }
+                                    %>
+                                    <%= ip %>
+                                </span>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            No data available yet.
+                        </td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>

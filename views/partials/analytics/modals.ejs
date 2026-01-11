@@ -1,0 +1,292 @@
+<!-- ========================================
+     ALL ANALYTICS MODALS - Complete File
+     ======================================== -->
+
+<!-- ===== STATS MODAL (Total/Today Clicks) ===== -->
+<div id="statsModal" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeModal(null, true)">×</button>
+        
+        <div class="modal-header">
+            <div id="modalIconBg" class="stat-icon" style="margin-right: 15px;">
+                <i id="modalIcon" class="ph"></i>
+            </div>
+            <h2 id="modalTitle" style="margin: 0; font-size: 1.4rem;">Analysis</h2>
+        </div>
+
+        <div class="modal-body">
+            <div class="modal-row">
+                <div>
+                    <div class="modal-label">Raw Clicks</div>
+                    <div class="modal-desc">Every single click event recorded.</div>
+                </div>
+                <div id="modalRaw" class="modal-value">0</div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 15px 0;">
+
+            <div class="modal-row">
+                <div>
+                    <div class="modal-label">Unique Visitors</div>
+                    <div class="modal-desc">Distinct people (IPs), excluding repeats.</div>
+                </div>
+                <div id="modalUnique" class="modal-value">0</div>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; margin-bottom: 5px;">
+                <span>Quality Score</span>
+                <span id="qualityScore">0%</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden;">
+                <div id="qualityBar" style="height: 100%; width: 0%; background: var(--primary); transition: width 0.5s ease;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ===== GEOGRAPHIC MODAL ===== -->
+<div id="geoModal" class="modal-overlay" onclick="closeGeoModal(event)">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeGeoModal(null, true)">×</button>
+        
+        <div class="modal-header">
+            <div class="stat-icon" style="margin-right: 15px; background: #dbeafe; color: #1e40af;">
+                <i class="ph ph-map-pin"></i>
+            </div>
+            <h2 id="geoModalTitle" style="margin: 0; font-size: 1.4rem;">Location Stats</h2>
+        </div>
+
+        <div class="modal-body">
+            <div class="modal-row">
+                <div>
+                    <div class="modal-label">Total Clicks</div>
+                    <div class="modal-desc">All clicks from this location.</div>
+                </div>
+                <div id="geoModalTotal" class="modal-value" style="color: #1e40af;">0</div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #f1f5f9; margin: 15px 0;">
+
+            <div class="modal-row">
+                <div>
+                    <div class="modal-label">Unique Visitors</div>
+                    <div class="modal-desc">Distinct IPs from this location.</div>
+                </div>
+                <div id="geoModalUnique" class="modal-value" style="color: #1e40af;">0</div>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: #64748b; margin-bottom: 5px;">
+                <span>Engagement Quality</span>
+                <span id="geoQualityScore">0%</span>
+            </div>
+            <div style="width: 100%; height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden;">
+                <div id="geoQualityBar" style="height: 100%; width: 0%; background: #1e40af; transition: width 0.5s ease;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ===== VIEW MODE MODAL ===== -->
+<div id="viewModeModal" class="modal-overlay" onclick="closeViewModeModal(event)">
+    <div class="modal-content" style="max-width: 400px;">
+        <button class="modal-close" onclick="closeViewModeModal(null, true)">×</button>
+        
+        <div class="modal-header">
+            <div class="stat-icon" style="margin-right: 15px; background: #e0e7ff; color: #4f46e5;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" stroke="currentColor" stroke-width="2"/>
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+            <h2 style="margin: 0; font-size: 1.4rem;">Choose View Mode</h2>
+        </div>
+
+        <div class="modal-body" style="margin-top: 20px;">
+            <label onclick="selectViewMode('heatmap')" style="display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: all 0.2s; margin-bottom: 12px;" id="heatmapOption">
+                <input type="radio" name="viewMode" value="heatmap" checked style="margin-top: 3px; pointer-events: none;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 15px; color: #1e293b; margin-bottom: 4px;">🗺️ Heatmap View</div>
+                    <div style="font-size: 13px; color: #64748b; line-height: 1.4;">Color intensity map showing traffic density patterns</div>
+                </div>
+            </label>
+
+            <label onclick="selectViewMode('markers')" style="display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: all 0.2s;" id="markersOption">
+                <input type="radio" name="viewMode" value="markers" style="margin-top: 3px; pointer-events: none;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 15px; color: #1e293b; margin-bottom: 4px;">📍 Marker View</div>
+                    <div style="font-size: 13px; color: #64748b; line-height: 1.4;">Clickable location pins with detailed statistics</div>
+                </div>
+            </label>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button onclick="closeViewModeModal(null, true)" style="flex: 1; padding: 10px; background: #f1f5f9; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; color: #64748b; transition: 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+                Cancel
+            </button>
+            <button onclick="applyViewMode()" style="flex: 1; padding: 10px; background: #4f46e5; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; color: white; transition: 0.2s;" onmouseover="this.style.background='#4338ca'" onmouseout="this.style.background='#4f46e5'">
+                Apply
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ===== DATA SOURCE MODAL ===== -->
+<div id="dataSourceModal" class="modal-overlay" onclick="closeDataSourceModal(event)">
+    <div class="modal-content" style="max-width: 400px;">
+        <button class="modal-close" onclick="closeDataSourceModal(null, true)">×</button>
+        
+        <div class="modal-header">
+            <div class="stat-icon" style="margin-right: 15px; background: #dcfce7; color: #15803d;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h2 style="margin: 0; font-size: 1.4rem;">Choose Data Source</h2>
+        </div>
+
+        <div class="modal-body" style="margin-top: 20px;">
+            <label onclick="selectDataSource('activity')" style="display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: all 0.2s; margin-bottom: 12px;" id="activityOption">
+                <input type="radio" name="dataSource" value="activity" checked style="margin-top: 3px; pointer-events: none;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 15px; color: #1e293b; margin-bottom: 4px;">🟢 Activity</div>
+                    <div style="font-size: 13px; color: #64748b; line-height: 1.4;">Total clicks including repeat visits (higher volume)</div>
+                </div>
+            </label>
+
+            <label onclick="selectDataSource('quality')" style="display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: all 0.2s;" id="qualityOption">
+                <input type="radio" name="dataSource" value="quality" style="margin-top: 3px; pointer-events: none;">
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 15px; color: #1e293b; margin-bottom: 4px;">🟣 Quality</div>
+                    <div style="font-size: 13px; color: #64748b; line-height: 1.4;">Unique visitors only, distinct IPs (true reach)</div>
+                </div>
+            </label>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+            <button onclick="closeDataSourceModal(null, true)" style="flex: 1; padding: 10px; background: #f1f5f9; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; color: #64748b; transition: 0.2s;" onmouseover="this.style.background='#e2e8f0'" onmouseout="this.style.background='#f1f5f9'">
+                Cancel
+            </button>
+            <button onclick="applyDataSource()" style="flex: 1; padding: 10px; background: #10b981; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; color: white; transition: 0.2s;" onmouseover="this.style.background='#059669'" onmouseout="this.style.background='#10b981'">
+                Apply
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ===== MAP GUIDE MODAL ===== -->
+<div id="mapGuideModal" class="modal-overlay" onclick="closeMapGuideModal(event)">
+    <div class="modal-content guide-modal-main-container">
+        <button class="modal-close" onclick="closeMapGuideModal(null, true)">×</button>
+        
+        <div class="guide-header-responsive">
+            <div class="guide-flex-container">
+                <div class="guide-icon-box">📍</div>
+                <h2 class="guide-title-text">Geographic Analytics Guide</h2>
+            </div>
+        </div>
+
+        <div class="guide-body-responsive">
+            <div class="guide-section">
+                <h3>🗺️ Understanding the Heatmap</h3>
+                <p>The heatmap visualizes visitor concentration across geographic locations using color intensity.</p>
+                <ul>
+                    <li><strong>Green → Yellow → Red:</strong> Low to high activity intensity</li>
+                    <li><strong>Purple → Blue:</strong> Low to high unique visitor quality</li>
+                    <li><strong>Density:</strong> Overlapping points create brighter colors</li>
+                </ul>
+            </div>
+
+            <div class="guide-section">
+                <h3>📊 Data Modes Explained</h3>
+                <div class="guide-table-wrapper">
+                    <table class="guide-responsive-table">
+                        <thead>
+                            <tr>
+                                <th>Mode</th>
+                                <th>Measures</th>
+                                <th>Colors</th>
+                                <th>Best For</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td data-label="Mode">Activity</td>
+                                <td data-label="Measures">Total clicks per location</td>
+                                <td data-label="Colors">🟢 Green → 🔴 Red</td>
+                                <td data-label="Best For">Finding popular regions</td>
+                            </tr>
+                            <tr>
+                                <td data-label="Mode">Quality</td>
+                                <td data-label="Measures">Unique visitors per location</td>
+                                <td data-label="Colors">🟣 Purple → 🔵 Blue</td>
+                                <td data-label="Best For">Measuring reach diversity</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="guide-section">
+                <h3>🎮 Map Controls</h3>
+                <div class="guide-control-grid">
+                    <div class="guide-control-item">
+                        <span class="ctrl-emoji">👁️</span>
+                        <div>
+                            <strong>Toggle View</strong>
+                            <p>Switch between heatmap and pin markers</p>
+                        </div>
+                    </div>
+                    <div class="guide-control-item">
+                        <span class="ctrl-emoji">📊</span>
+                        <div>
+                            <strong>Data Mode</strong>
+                            <p>Switch between Activity and Quality metrics</p>
+                        </div>
+                    </div>
+                    <div class="guide-control-item">
+                        <span class="ctrl-emoji">🖱️</span>
+                        <div>
+                            <strong>Click Markers</strong>
+                            <p>View exact numbers for each location</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="guide-tips-box">
+                <h3>💡 Tips & Tricks</h3>
+                <ul>
+                    <li>🎯 <strong>Compare Modes:</strong> High activity + low quality = repeated visits</li>
+                    <li>🌐 <strong>Geographic Lists:</strong> Scroll below the map for details</li>
+                    <li>📈 <strong>Unique vs Total:</strong> Total shows engagement, Unique shows reach</li>
+                    <li>⏰ <strong>Recent Activity:</strong> Check the table for live details</li>
+                    <li>🔒 <strong>Privacy:</strong> IP addresses are masked for user privacy</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="guide-footer-responsive">
+            <button onclick="closeMapGuideModal(null, true)" class="guide-confirm-btn">
+                Got it! 🚀
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<!-- ===== GLOBAL INFO TOOLTIP ===== -->
+<div id="globalInfoTooltip" style="position: fixed; background: #1e293b; color: white; padding: 12px 14px; border-radius: 8px; font-size: 12px; white-space: nowrap; opacity: 0; visibility: hidden; transition: all 0.2s ease; pointer-events: none; z-index: 99999; box-shadow: 0 4px 12px rgba(0,0,0,0.3); font-family: 'Segoe UI', system-ui, sans-serif;">
+    <div style="font-weight: 600; margin-bottom: 6px; color: #a5b4fc;">Metrics Explained</div>
+    <div style="margin-bottom: 3px;"><strong style="color: #10b981;">Activity:</strong> Total clicks</div>
+    <div style="margin-bottom: 3px;"><strong style="color: #8b5cf6;">Quality:</strong> Unique IPs</div>
+    <div><strong style="color: #4f46e5;">Ratio:</strong> % unique visitors</div>
+    <div id="tooltipArrow" style="position: absolute; width: 0; height: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; border-right: 6px solid #1e293b;"></div>
+</div>
