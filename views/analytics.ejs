@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShortURL | Analytics</title>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/?size=100&id=rLMbY01ZXrPE&format=png&color=000000">
+    
+    <!-- Preconnect for faster CDN loading -->
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="https://unpkg.com">
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- Common Styles (shared across all pages) -->
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    
+    <!-- Page-specific Styles -->
+    <link rel="stylesheet" href="/css/analytics.css">
+    
+    <!-- Data Injection Script -->
+    <script>
+        // Create serverData object with all backend data
+        const serverData = {
+            // Stats
+            totalClicks: <%= totalClicks || 0 %>,
+            uniqueTotal: <%= uniqueTotal || 0 %>,
+            clicksToday: <%= clicksToday || 0 %>,
+            uniqueToday: <%= uniqueToday || 0 %>,
+            
+            // Chart data (JSON parsed)
+            trendLabels: JSON.parse('<%- trendLabels %>'),
+            trendData: JSON.parse('<%- trendData %>'),
+            deviceStats: JSON.parse('<%- deviceStats %>'),
+            hourlyStats: JSON.parse('<%- hourlyStats %>'),
+            hourlyUnique: JSON.parse('<%- hourlyUnique %>'),
+            sourceLabels: JSON.parse('<%- sourceLabels %>'),
+            sourceData: JSON.parse('<%- sourceData %>'),
+            
+            // Geographic data
+            topCities: JSON.parse('<%- topCities %>'),
+            topStates: JSON.parse('<%- topStates %>'),
+            topCountries: JSON.parse('<%- topCountries %>'),
+            heatmapPoints: JSON.parse('<%- heatmapPoints %>'),
+            
+            // Max values for scaling
+            maxTotalClicks: <%= maxTotalClicks || 1 %>,
+            maxUniqueVisitors: <%= maxUniqueVisitors || 1 %>
+        };
+
+        // Destructure for easy access
+        const {
+            totalClicks,
+            uniqueTotal,
+            clicksToday,
+            uniqueToday,
+            trendLabels,
+            trendData,
+            deviceStats,
+            hourlyStats,
+            hourlyUnique,
+            sourceLabels,
+            sourceData,
+            topCities,
+            topStates,
+            topCountries,
+            heatmapPoints,
+            maxTotalClicks,
+            maxUniqueVisitors
+        } = serverData;
+        
+        // Modal data configuration
+        const modalData = {
+            total: {
+                title: "Total Traffic Analysis",
+                raw: totalClicks,
+                unique: uniqueTotal,
+                icon: "ph-cursor-click",
+                color: "#4f46e5"
+            },
+            today: {
+                title: "Today's Traffic Analysis",
+                raw: clicksToday,
+                unique: uniqueToday,
+                icon: "ph-chart-bar",
+                color: "#15803d"
+            }
+        };
+    </script>
+</head>
+<body class="analytics-body">
+
+    <!-- Include Navbar Partial -->
+    <%- include('partials/navbar', { page: '' }) %>
+
+    <div class="container">
+        
+        <!-- Include Header Card Partial -->
+        <%- include('partials/analytics/header', { 
+            shortId: shortId,
+            redirectUrl: redirectUrl
+        }) %>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <%- include('partials/analytics/stat-card', {
+                modalType: 'total',
+                value: totalClicks,
+                label: 'Total Clicks',
+                bgColor: '#e0e7ff',
+                iconColor: '#4338ca',
+                icon: 'ph-cursor-click'
+            }) %>
+            
+            <%- include('partials/analytics/stat-card', {
+                modalType: 'today',
+                value: clicksToday,
+                label: 'Clicks Today',
+                bgColor: '#dcfce7',
+                iconColor: '#15803d',
+                icon: 'ph-chart-bar'
+            }) %>
+        </div>
+
+        <!-- Charts Row 1: Growth Trend & Device Breakdown -->
+        <div class="charts-row">
+            <%- include('partials/analytics/chart-card', {
+                title: 'Growth Trend (Last 30 Days)',
+                canvasId: 'clickChart',
+                style: 'flex: 2;',
+                minHeight: '300px',
+                canvasStyle: ''
+            }) %>
+
+            <%- include('partials/analytics/chart-card', {
+                title: 'Device Breakdown',
+                canvasId: 'deviceChart',
+                style: 'flex: 1;',
+                minHeight: '300px',
+                canvasStyle: 'display: flex; justify-content: center; align-items: center;'
+            }) %>
+        </div>
+
+        <!-- Charts Row 2: Hourly Stats & Top Sources -->
+        <div class="charts-row">
+            <%- include('partials/analytics/chart-card', {
+                title: 'Peak Activity Hours',
+                canvasId: 'hourlyChart',
+                style: 'flex: 1;',
+                minHeight: '300px',
+                canvasStyle: ''
+            }) %>
+
+            <%- include('partials/analytics/chart-card', {
+                title: 'Top Traffic Sources',
+                canvasId: 'sourceChart',
+                style: 'flex: 1;',
+                minHeight: '300px',
+                canvasStyle: ''
+            }) %>
+        </div>
+
+        <!-- Include Map Section Partial -->
+        <%- include('partials/analytics/map-section') %>
+
+        <!-- City & State Breakdown -->
+        <div class="charts-row">
+            <%- include('partials/analytics/geo-list', { 
+                title: 'Top Cities', 
+                listId: 'cityList',
+                maxHeight: '400px'
+            }) %>
+            
+            <%- include('partials/analytics/geo-list', { 
+                title: 'Top States/Regions', 
+                listId: 'stateList',
+                maxHeight: '400px'
+            }) %>
+        </div>
+
+        <!-- Include Activity Table Partial -->
+        <%- include('partials/analytics/activity-table', {
+            recentActivity: recentActivity
+        }) %>
+
+    </div>
+
+    <!-- Include All Modals Partial -->
+    <%- include('partials/analytics/modals') %>
+
+    <!-- External Libraries (Load First) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="https://unpkg.com/@phosphor-icons/web" defer></script>
+    
+    <!-- Your Custom Scripts (Load in Order) -->
+    <script src="/js/analytics-main.js" defer></script>
+    <script src="/js/analytics-charts.js" defer></script>
+    <script src="/js/analytics-map.js" defer></script>
+    <script src="/js/analytics-modals.js" defer></script>
+    <script src="/js/analytics-geo.js" defer></script>
+
+</body>
+</html>
