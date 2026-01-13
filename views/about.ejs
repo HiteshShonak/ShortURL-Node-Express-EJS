@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShortURL | About</title>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/?size=100&id=rLMbY01ZXrPE&format=png&color=000000">
+    
+    <!-- External Libraries -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <!-- Common Styles (shared across all pages) -->
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/navbar.css">
+    
+    <!-- Page-specific Styles -->
+    <link rel="stylesheet" href="/css/about.css">
+</head>
+<body>
+
+    <!-- Include Navbar Partial -->
+    <%- include('partials/navbar', { page: 'about' }) %>
+
+    <!-- Hero Section with SVG -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    Shorten URLs.<br>
+                    Track Analytics.<br>
+                    Grow Smarter.
+                </h1>
+                <p class="hero-subtitle">
+                    A simple yet powerful URL shortener with built-in analytics. 
+                    Create trackable short links and gain insights into your audience with detailed reports.
+                </p>
+                <a href="/signup" class="btn btn-primary">Get Started →</a>
+            </div>
+            
+            <!-- SVG Illustration -->
+            <div class="hero-image">
+                <svg viewBox="0 0 500 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Background Card -->
+                    <rect x="50" y="80" width="400" height="280" rx="20" fill="#ffffff" stroke="#e5e7eb" stroke-width="2"/>
+                    
+                    <!-- Window Controls -->
+                    <circle cx="80" cy="110" r="6" fill="#ef4444"/>
+                    <circle cx="105" cy="110" r="6" fill="#f59e0b"/>
+                    <circle cx="130" cy="110" r="6" fill="#10b981"/>
+                    
+                    <!-- Long URL Bar -->
+                    <rect x="80" y="150" width="340" height="50" rx="10" fill="#f3f4f6" stroke="#e5e7eb" stroke-width="2"/>
+                    <text x="100" y="180" font-family="monospace" font-size="12" fill="#9ca3af">
+                        https://very-long-url.com/path/to/page...
+                    </text>
+                    
+                    <!-- Arrow -->
+                    <path d="M250 220 L250 250" stroke="#4f46e5" stroke-width="3" stroke-linecap="round"/>
+                    <path d="M240 240 L250 250 L260 240" stroke="#4f46e5" stroke-width="3" stroke-linecap="round" fill="none"/>
+                    
+                    <!-- Short URL Bar -->
+                    <rect x="150" y="270" width="200" height="50" rx="10" fill="#eef2ff" stroke="#4f46e5" stroke-width="2"/>
+                    <text x="180" y="300" font-family="monospace" font-size="14" fill="#4f46e5" font-weight="bold">
+                        short.ly/abc123
+                    </text>
+                    
+                    <!-- Analytics Icon -->
+                    <g transform="translate(370, 220)">
+                        <circle cx="0" cy="0" r="30" fill="#10b981" opacity="0.1"/>
+                        <path d="M-10 5 L-10 -10 M-5 0 L-5 -10 M0 -5 L0 -10 M5 3 L5 -10 M10 7 L10 -10" 
+                              stroke="#10b981" stroke-width="3" stroke-linecap="round"/>
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="section-header">
+            <h2 class="section-title">What You Get</h2>
+            <p class="section-subtitle">Everything you need to manage and track your links</p>
+        </div>
+
+        <div class="features-grid">
+            <!-- Feature 1: URL Shortening -->
+            <div class="feature-card">
+                <div class="feature-icon icon-primary">
+                    <i class="ph-bold ph-link"></i>
+                </div>
+                <h3 class="feature-title">URL Shortening</h3>
+                <p class="feature-description">
+                    Paste any long URL and get a short, clean link instantly. 
+                    Easy to share across social media, emails, and messages.
+                </p>
+            </div>
+
+            <!-- Feature 2: Analytics Dashboard -->
+            <div class="feature-card">
+                <div class="feature-icon icon-success">
+                    <i class="ph ph-chart-line-up"></i>
+                </div>
+                <h3 class="feature-title">Detailed Analytics</h3>
+                <p class="feature-description">
+                    Track total clicks, unique visitors, hourly trends, and 30-day performance 
+                    with beautiful interactive charts.
+                </p>
+            </div>
+
+            <!-- Feature 3: Geographic Tracking -->
+            <div class="feature-card">
+                <div class="feature-icon icon-warning">
+                    <i class="ph ph-map-pin"></i>
+                </div>
+                <h3 class="feature-title">Location Insights</h3>
+                <p class="feature-description">
+                    See where your clicks come from with interactive heatmaps. 
+                    View top cities, states, and countries engaging with your links.
+                </p>
+            </div>
+
+            <!-- Feature 4: Smart Sharing -->
+            <div class="feature-card">
+                <div class="feature-icon icon-info">
+                    <i class="ph ph-share-network"></i>
+                </div>
+                <h3 class="feature-title">Smart Sharing</h3>
+                <p class="feature-description">
+                    Share directly to WhatsApp, Telegram, LinkedIn, and Instagram with built-in 
+                    tracking to know which platform drives engagement.
+                </p>
+            </div>
+
+            <!-- Feature 5: Device Breakdown -->
+            <div class="feature-card">
+                <div class="feature-icon icon-secondary">
+                    <i class="ph ph-devices"></i>
+                </div>
+                <h3 class="feature-title">Device Tracking</h3>
+                <p class="feature-description">
+                    Know whether users are on desktop, mobile, tablet, or if it's bot traffic. 
+                    Optimize your content for the right devices.
+                </p>
+            </div>
+
+            <!-- Feature 6: Peak Hours -->
+            <div class="feature-card">
+                <div class="feature-icon icon-primary">
+                    <i class="ph ph-clock-countdown"></i>
+                </div>
+                <h3 class="feature-title">Peak Hours Analysis</h3>
+                <p class="feature-description">
+                    Discover when your audience is most active with hourly breakdown charts. 
+                    Post at the right time for maximum engagement.
+                </p>
+            </div>
+
+            <!-- Feature 7: Privacy -->
+            <div class="feature-card">
+                <div class="feature-icon icon-success">
+                    <i class="ph ph-lock"></i>
+                </div>
+                <h3 class="feature-title">Privacy First</h3>
+                <p class="feature-description">
+                    Your data is secure. IP addresses are hashed, and analytics are 
+                    private and accessible only to you.
+                </p>
+            </div>
+
+            <!-- Feature 8: Link Management -->
+            <div class="feature-card">
+                <div class="feature-icon icon-warning">
+                    <i class="ph ph-trash"></i>
+                </div>
+                <h3 class="feature-title">Easy Management</h3>
+                <p class="feature-description">
+                    View all your links in one dashboard. Delete old or unwanted links 
+                    with a single click anytime.
+                </p>
+            </div>
+
+            <!-- Feature 9: Referral Tracking -->
+            <div class="feature-card">
+                <div class="feature-icon icon-info">
+                    <i class="ph ph-compass"></i>
+                </div>
+                <h3 class="feature-title">Referral Sources</h3>
+                <p class="feature-description">
+                    Identify where your traffic comes from - social media, search engines, 
+                    or direct shares. Optimize your strategy accordingly.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <div class="section-header">
+            <h2 class="section-title">How It Works</h2>
+            <p class="section-subtitle">Three simple steps to start tracking your links</p>
+        </div>
+
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">1</div>
+                <% if (locals.user) { %>
+                    <h3 class="step-title" style="color: #4CAF50;">Account Active</h3>
+                    <p class="step-description">
+                        You're all set, <strong><%= user.name %></strong>! You've successfully joined. 
+                        Now you have full access to create and manage your secure links.
+                    </p>
+                <% } else { %>
+                    <h3 class="step-title">Sign Up</h3>
+                    <p class="step-description">
+                        Create a free account to access all features. 
+                        Quick registration with just your email and password.
+                    </p>
+                <% } %>
+            </div>
+
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3 class="step-title">Shorten & Share</h3>
+                <p class="step-description">
+                    Paste your long URL and get a short link instantly. 
+                    Share it anywhere - social media, emails, or messages.
+                </p>
+            </div>
+
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3 class="step-title">Track Performance</h3>
+                <p class="step-description">
+                    Monitor every click in real-time. View analytics, 
+                    geographic data, and optimize your strategy.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <% if (locals.user) { %>
+            <h2 class="cta-title">Welcome back, <%= user.name %>!</h2>
+            <p class="cta-description">
+                Your workspace is active. You're just one click away from transforming a long URL into a powerful, trackable link.
+            </p>
+            <a href="/" class="btn btn-white">Start Shortening Now</a>
+        <% } else { %>
+            <h2 class="cta-title">Ready to Start Tracking?</h2>
+            <p class="cta-description">
+                Create your free account and start shortening links with powerful analytics today.
+            </p>
+            <a href="/signup" class="btn btn-white">Create Free Account</a>
+        <% } %>
+    </section>
+
+    <!-- Your JavaScript -->
+    <script src="/js/about.js"></script>
+
+</body>
+</html>
