@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require('../models/user');
 const { setUser } = require('../service/auth');
 
 async function handleUserSignup(req, res) {
