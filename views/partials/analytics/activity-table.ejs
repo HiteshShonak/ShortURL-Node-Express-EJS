@@ -10,7 +10,7 @@
                     <th>Location</th>
                     <th>Source</th>
                     <th>Device</th>
-                    <th>OS</th> <th>IP Address</th>
+                    <th>Operating System</th> <th>IP Address</th>
                 </tr>
             </thead>
             <tbody>
@@ -81,21 +81,36 @@
                             <td>
                                 <% 
                                     let osName = entry.os || 'Unknown';
+                                    // Default (Gray)
                                     let osIcon = 'ph-laptop';
                                     let osBg = '#f3f4f6';
-                                    let osColor = '#374151';
+                                    let osColor = '#64748b';
 
                                     if (osName.includes('Windows')) {
-                                        osIcon = 'ph-windows-logo'; osBg = '#e0f2fe'; osColor = '#0369a1'; // Blue
+                                        osIcon = 'ph-windows-logo'; 
+                                        osBg = '#e0f2fe'; 
+                                        osColor = '#0369a1'; // Blue
                                     } else if (osName.includes('Android')) {
-                                        osIcon = 'ph-android-logo'; osBg = '#dcfce7'; osColor = '#15803d'; // Green
-                                    } else if (osName.includes('iOS') || osName.includes('Mac') || osName.includes('macOS')) {
-                                        osIcon = 'ph-apple-logo'; osBg = '#f3f4f6'; osColor = '#1f2937'; // Dark Grey
+                                        osIcon = 'ph-android-logo'; 
+                                        osBg = '#dcfce7'; 
+                                        osColor = '#15803d'; // Green
+                                    } else if (osName.includes('iOS') || osName.includes('iPhone') || osName.includes('iPad')) {
+                                        osIcon = 'ph-apple-logo'; 
+                                        osBg = '#f3f4f6'; 
+                                        osColor = '#1f2937'; // Dark Gray (Apple)
+                                        osName = 'iOS'; // Clean up name
+                                    } else if (osName.includes('Mac') || osName.includes('macOS')) {
+                                        osIcon = 'ph-apple-logo'; 
+                                        osBg = '#f3f4f6'; 
+                                        osColor = '#1f2937'; // Dark Gray
+                                        osName = 'macOS';
                                     } else if (osName.includes('Linux')) {
-                                        osIcon = 'ph-linux-logo'; osBg = '#ffedd5'; osColor = '#c2410c'; // Orange
+                                        osIcon = 'ph-linux-logo'; 
+                                        osBg = '#ffedd5'; 
+                                        osColor = '#c2410c'; // Orange
                                     }
                                 %>
-                                <span style="display: inline-flex; align-items: center; gap: 5px; background: <%= osBg %>; color: <%= osColor %>; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">
+                                <span style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; background: <%= osBg %>; color: <%= osColor %>;">
                                     <i class="ph <%= osIcon %>" style="font-size: 1.1em;"></i>
                                     <%= osName %>
                                 </span>
