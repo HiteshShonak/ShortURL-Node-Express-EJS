@@ -1,4 +1,3 @@
-<!-- ===== RECENT ACTIVITY TABLE ===== -->
 <div class="table-card">
     <div class="table-header">
         <h3>Recent Activity Log</h3>
@@ -11,7 +10,7 @@
                     <th>Location</th>
                     <th>Source</th>
                     <th>Device</th>
-                    <th>IP Address</th>
+                    <th>OS</th> <th>IP Address</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,6 +25,7 @@
                                     <%= new Date(entry.timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) %>
                                 </div>
                             </td>
+
                             <td>
                                 <% if (entry.location && entry.location !== 'Unknown') { %>
                                     <div style="display: flex; align-items: center; gap: 6px;">
@@ -36,6 +36,7 @@
                                     <span style="color: #9ca3af; font-size: 0.9rem;">Unknown</span>
                                 <% } %>
                             </td>
+
                             <td>
                                 <% 
                                     let ref = entry.referrer || 'Direct';
@@ -58,19 +59,17 @@
                                     <%= ref %>
                                 </span>
                             </td>
+
                             <td>
                                 <% 
                                     let deviceClass = 'device-desktop';
                                     let deviceIcon = 'ph-desktop';
                                     if (entry.device === 'Mobile') { 
-                                        deviceClass = 'device-mobile'; 
-                                        deviceIcon = 'ph-device-mobile'; 
+                                        deviceClass = 'device-mobile'; deviceIcon = 'ph-device-mobile'; 
                                     } else if (entry.device === 'Tablet') { 
-                                        deviceClass = 'device-tablet'; 
-                                        deviceIcon = 'ph-device-tablet'; 
+                                        deviceClass = 'device-tablet'; deviceIcon = 'ph-device-tablet'; 
                                     } else if (entry.device === 'Bot') { 
-                                        deviceClass = 'device-bot'; 
-                                        deviceIcon = 'ph-robot'; 
+                                        deviceClass = 'device-bot'; deviceIcon = 'ph-robot'; 
                                     }
                                 %>
                                 <span class="device-badge <%= deviceClass %>">
@@ -78,6 +77,30 @@
                                     <%= entry.device %>
                                 </span>
                             </td>
+
+                            <td>
+                                <% 
+                                    let osName = entry.os || 'Unknown';
+                                    let osIcon = 'ph-laptop';
+                                    let osBg = '#f3f4f6';
+                                    let osColor = '#374151';
+
+                                    if (osName.includes('Windows')) {
+                                        osIcon = 'ph-windows-logo'; osBg = '#e0f2fe'; osColor = '#0369a1'; // Blue
+                                    } else if (osName.includes('Android')) {
+                                        osIcon = 'ph-android-logo'; osBg = '#dcfce7'; osColor = '#15803d'; // Green
+                                    } else if (osName.includes('iOS') || osName.includes('Mac') || osName.includes('macOS')) {
+                                        osIcon = 'ph-apple-logo'; osBg = '#f3f4f6'; osColor = '#1f2937'; // Dark Grey
+                                    } else if (osName.includes('Linux')) {
+                                        osIcon = 'ph-linux-logo'; osBg = '#ffedd5'; osColor = '#c2410c'; // Orange
+                                    }
+                                %>
+                                <span style="display: inline-flex; align-items: center; gap: 5px; background: <%= osBg %>; color: <%= osColor %>; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 600;">
+                                    <i class="ph <%= osIcon %>" style="font-size: 1.1em;"></i>
+                                    <%= osName %>
+                                </span>
+                            </td>
+
                             <td>
                                 <span style="font-family: monospace; color: var(--text-muted); background: #f8fafc; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;">
                                     <% 
@@ -96,8 +119,11 @@
                     <% }) %>
                 <% } else { %>
                     <tr>
-                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
-                            No data available yet.
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                                <i class="ph ph-chart-bar" style="font-size: 2rem; color: #cbd5e1;"></i>
+                                <span>No data available yet. Share your link to see activity!</span>
+                            </div>
                         </td>
                     </tr>
                 <% } %>
