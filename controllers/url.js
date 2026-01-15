@@ -1,180 +1,93 @@
-const {nanoid} = require('nanoid');
+const { nanoid } = require('nanoid');
 const URLModel = require('../models/url');
-const userAgent = require('user-agent');
 const requestIp = require('request-ip');
 const geoip = require('geoip-lite');
 
-async function handleGenerateNewShortUrl(req, res) {
-    const shortId = nanoid(8);
-    const body = req.body;
-    if (!body || !body.url) {
-        return res.status(400).json({ error: 'URL is required' });
-    }
-    const { url } = req.body;
-    const allUrls = await URLModel.find({});
+// ==========================================
+// 1. STATIC DATA MAPS (Cached in Memory)
+// ==========================================
+const STATE_CODE_MAP = {
+    'AN': 'Andaman and Nicobar', 'AP': 'Andhra Pradesh', 'AR': 'Arunachal Pradesh',
+    'AS': 'Assam', 'BR': 'Bihar', 'CH': 'Chandigarh', 'CT': 'Chhattisgarh',
+    'DD': 'Daman and Diu', 'DL': 'Delhi', 'DN': 'Dadra and Nagar Haveli',
+    'GA': 'Goa', 'GJ': 'Gujarat', 'HP': 'Himachal Pradesh', 'HR': 'Haryana',
+    'JH': 'Jharkhand', 'JK': 'Jammu and Kashmir', 'KA': 'Karnataka',
+    'KL': 'Kerala', 'LA': 'Ladakh', 'LD': 'Lakshadweep', 'MH': 'Maharashtra',
+    'ML': 'Meghalaya', 'MN': 'Manipur', 'MP': 'Madhya Pradesh', 'MZ': 'Mizoram',
+    'NL': 'Nagaland', 'OR': 'Odisha', 'PB': 'Punjab', 'PY': 'Puducherry',
+    'RJ': 'Rajasthan', 'SK': 'Sikkim', 'TN': 'Tamil Nadu', 'TG': 'Telangana',
+    'TR': 'Tripura', 'UP': 'Uttar Pradesh', 'UT': 'Uttarakhand', 'WB': 'West Bengal',
+    // International States (Top 5)
+    'CA': 'California', 'NY': 'New York', 'TX': 'Texas', 'FL': 'Florida',
+    'ENG': 'England'
+};
 
-    await URLModel.create({ 
-        shortId: shortId, 
-        redirectUrl: url,
-        visitHistory: [],
-        createdBy: req.user._id
-    });
-    return res.redirect(`/?generated=${shortId}`);
+const COUNTRY_CODE_MAP = {
+    'IN': 'India', 'US': 'United States', 'GB': 'United Kingdom',
+    'CA': 'Canada', 'AU': 'Australia', 'DE': 'Germany', 'FR': 'France',
+    'CN': 'China', 'JP': 'Japan', 'RU': 'Russia', 'BR': 'Brazil',
+    'IT': 'Italy', 'ES': 'Spain', 'NL': 'Netherlands', 'SG': 'Singapore',
+    'AE': 'United Arab Emirates', 'SA': 'Saudi Arabia', 'NP': 'Nepal', 'LK': 'Sri Lanka',
+    'BD': 'Bangladesh', 'PK': 'Pakistan', 'ID': 'Indonesia', 'TH': 'Thailand',
+    'VN': 'Vietnam', 'PH': 'Philippines', 'MY': 'Malaysia'
+};
+
+// ==========================================
+// 2. CONTROLLER FUNCTIONS
+// ==========================================
+
+async function handleGenerateNewShortUrl(req, res) {
+    try {
+        const body = req.body;
+        if (!body || !body.url) {
+            return res.status(400).json({ error: 'URL is required' });
+        }
+
+        let originalUrl = body.url.trim();
+
+        // ✅ UX FIX: Auto-prepend https:// if missing
+        if (!/^https?:\/\//i.test(originalUrl)) {
+            originalUrl = 'https://' + originalUrl;
+        }
+
+        const shortId = nanoid(8);
+        
+        await URLModel.create({ 
+            shortId: shortId, 
+            redirectUrl: originalUrl,
+            visitHistory: [],
+            createdBy: req.user._id
+        });
+
+        return res.redirect(`/?generated=${shortId}`);
+    } catch (error) {
+        console.error("Error generating URL:", error);
+        return res.status(500).json({ error: "Server Error" });
+    }
 }
 
 async function handleRedirectToOriginalUrl(req, res) {
     const shortId = req.params.shortId;
-
-    const entry = await URLModel.findOne({ shortId });
+    
+    // Lean query for speed
+    const entry = await URLModel.findOne({ shortId }).select('redirectUrl');
 
     if (!entry) {
         return res.status(404).json({ error: 'Short URL not found' });
     }
 
+    // 🚀 STEP 1: Redirect IMMEDIATELY (Best UX)
     res.redirect(entry.redirectUrl);
 
+    // 🚀 STEP 2: Track in Background (Non-blocking)
+    // We don't await this, so the user doesn't wait for database writes
     trackVisit(shortId, req).catch(err => {
-        console.error(`Analytics error for ${shortId}:`, err);
+        console.error(`❌ Background Tracking Error (${shortId}):`, err.message);
     });
-}
-
-async function trackVisit(shortId, req) {
-    const userIp = getClientIP(req);  
-    const geoData = getGeolocation(userIp);
-    
-    await URLModel.findOneAndUpdate(
-        { shortId },
-        {
-            $push: {
-                visitHistory: {
-                    timestamp: Date.now(),
-                    device: getDeviceType(req.headers['user-agent']),
-                    ip: userIp,  
-                    location: geoData.location,
-                    referrer: getReferrerSource(req),
-                    latitude: geoData.latitude,
-                    longitude: geoData.longitude,
-                    region: geoData.region
-                }
-            }
-        }
-    );
-}
-
-function getClientIP(req) {
-    let ip = requestIp.getClientIp(req);
-    
-    // Clean IPv6 localhost format
-    if (ip && ip.startsWith('::ffff:')) {
-        ip = ip.replace('::ffff:', '');
-    }
-    
-    //For testing purposes, convert localhost to a fixed IP (Delhi)
-    if (ip === '::1' || ip === '127.0.0.1' || ip === 'localhost') {
-        console.log(`🧪 Converting localhost to Delhi IP`);
-        return '103.240.232.0';  // Delhi IP
-    }
-    
-    return ip;
-}
-
-function getDeviceType(userAgentString) {
-    const ua = userAgent.parse(userAgentString);
-    if (ua.isBot) return 'Bot';
-    if (ua.isTablet) return 'Tablet';
-    if (ua.isMobile) return 'Mobile';
-    return 'Desktop';
-}
-
-function getGeolocation(ip) {
-    const geo = geoip.lookup(ip);
-    
-    if (!geo) {
-        return {
-            location: 'Unknown',
-            latitude: 0,
-            longitude: 0,
-            region: 'Unknown'
-        };
-    }
-    
-    const city = geo.city || 'Unknown';
-    const country = geo.country || 'Unknown';
-    const latitude = geo.ll?.[0] || 0;
-    const longitude = geo.ll?.[1] || 0;
-    const region = geo.region || 'Unknown';
-    
-    let location = 'Unknown';
-    if (city !== 'Unknown' && country !== 'Unknown') {
-        location = `${city}, ${country}`;
-    } else if (city !== 'Unknown') {
-        location = city;
-    } else if (country !== 'Unknown') {
-        location = country;
-    }
-    
-    return {
-        location,
-        latitude,
-        longitude,
-        region
-    };
-}
-
-
-function getReferrerSource(req) {
-    const manualSource = req.query.source || req.query.utm_source;
-    if (manualSource) return manualSource;
-
-    const referrerHeader = req.headers['referer'] || req.headers['referrer'];
-    
-    if (!referrerHeader) {
-        return 'Direct';
-    }
-
-    try {
-        const hostname = new URL(referrerHeader).hostname.replace('www.', '');
-        const currentHost = req.get('host').replace('www.', '');
-        
-        // ✅ Localhost or self-referral = Direct
-        if (hostname === 'localhost' || 
-            hostname === '127.0.0.1' || 
-            hostname === currentHost) {
-            return 'Direct';
-        }
-        
-        return hostname;
-    } catch (e) {
-        return 'Direct';
-    }
-}
-
-//Mask IP for privacy display
-function maskIP(ip) {
-    if (!ip || ip === 'Unknown') return 'Unknown';
-    
-    // IPv4: 103.240.232.15 → 103.240.xx.xx
-    if (ip.includes('.')) {
-        const parts = ip.split('.');
-        if (parts.length === 4) {
-            return `${parts[0]}.${parts[1]}.xx.xx`;
-        }
-    }
-    
-    // IPv6: 2001:0db8:85a3::8a2e → 2001:0db8:xx:xx
-    if (ip.includes(':')) {
-        const parts = ip.split(':');
-        if (parts.length >= 2) {
-            return `${parts[0]}:${parts[1]}:xx:xx`;
-        }
-    }
-    
-    return 'xx.xx.xx.xx';
 }
 
 async function handleDeleteURL(req, res) {
     const id = req.params.shortId;
-
     try {
         const deletedEntry = await URLModel.findOneAndDelete({ 
             shortId: id, 
@@ -182,11 +95,8 @@ async function handleDeleteURL(req, res) {
         });
 
         if (!deletedEntry) {
-            return res.status(403).json({ 
-                error: "Unauthorized: You can only delete your own links." 
-            });
+            return res.status(403).json({ error: "Unauthorized or Link not found" });
         }
-
         return res.json({ status: "success", message: "Link deleted successfully." });
 
     } catch (error) {
@@ -194,277 +104,327 @@ async function handleDeleteURL(req, res) {
     }
 }
 
+// ==========================================
+// 3. ANALYTICS ENGINE (Optimized)
+// ==========================================
+
 async function handleGetAnalyticsPage(req, res) {
-    const shortId = req.params.shortId;
-    const entry = await URLModel.findOne({ shortId });
+    try {
+        const shortId = req.params.shortId;
+        const entry = await URLModel.findOne({ shortId });
 
-    
+        if (!entry) return res.status(404).send("Link not found");
 
-    if (!entry || entry.createdBy.toString() !== req.user._id.toString()) {
-        if(req.user.role === 'ADMIN'){
-            // Allow ADMIN users to access analytics of any URL
+        // Security Check
+        if (entry.createdBy.toString() !== req.user._id.toString() && req.user.role !== 'ADMIN') {
+            return res.status(403).send("Unauthorized Access");
         }
-        else{
-            return res.status(403).send("Unauthorized");
-        }
+
+        const history = entry.visitHistory || [];
         
-    }
+        // --- Single-Pass Calculation Variables ---
+        // We calculate EVERYTHING in one loop for O(N) performance
+        const todayStr = new Date().toLocaleDateString();
+        const last30DaysDate = new Date();
+        last30DaysDate.setDate(last30DaysDate.getDate() - 30);
 
-    const history = entry.visitHistory || [];
-    const totalClicks = history.length;
-    
-    const uniqueTotal = new Set(history.map(h => h.ip)).size;
+        let clicksToday = 0;
+        const uniqueIPsTotal = new Set();
+        const uniqueIPsToday = new Set();
+        
+        const clickTrendMap = {}; // Date -> Count
+        const deviceStats = { Desktop: 0, Mobile: 0, Tablet: 0, Bot: 0 };
+        const sourceStats = {};
+        const cityData = {};
+        const stateData = {};
+        const countryData = {};
+        const hourlyStats = Array(24).fill(0);
+        const hourlyUniqueIPs = Array(24).fill(null).map(() => new Set());
+        const locationHeatmap = {};
 
-    const todayStr = new Date().toLocaleDateString();
-    const historyToday = history.filter(h => 
-        new Date(h.timestamp).toLocaleDateString() === todayStr
-    );
-    const clicksToday = historyToday.length;
-    const uniqueToday = new Set(historyToday.map(h => h.ip)).size;
+        // --- THE MASTER LOOP (O(N)) ---
+        for (const h of history) {
+            if (!h.timestamp) continue;
 
-    const clickTrend = {};
-    const last30Days = new Date();
-    last30Days.setDate(last30Days.getDate() - 30);
+            const dateObj = new Date(h.timestamp);
+            const dateStr = dateObj.toLocaleDateString();
+            const ip = h.ip || 'Unknown';
 
-    history.forEach(entry => {
-        if (entry.timestamp) {
-            const dateObj = new Date(entry.timestamp);
-            if (dateObj >= last30Days) {
-                const dateKey = dateObj.toLocaleDateString('en-US', { 
-                    year: 'numeric', 
-                    month: 'numeric', 
-                    day: 'numeric' 
-                });
-                const label = dateObj.toLocaleDateString('en-US', { 
-                    month: 'short', 
-                    day: 'numeric' 
-                });
+            // 1. Totals & Uniques
+            uniqueIPsTotal.add(ip);
+            if (dateStr === todayStr) {
+                clicksToday++;
+                uniqueIPsToday.add(ip);
+            }
+
+            // 2. Trend (Last 30 Days)
+            if (dateObj >= last30DaysDate) {
+                const dateKey = dateObj.toLocaleDateString('en-US');
+                const label = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
                 
-                if (!clickTrend[dateKey]) {
-                    clickTrend[dateKey] = { count: 0, label: label, date: dateObj };
+                if (!clickTrendMap[dateKey]) {
+                    clickTrendMap[dateKey] = { count: 0, label: label, date: dateObj };
                 }
-                clickTrend[dateKey].count++;
+                clickTrendMap[dateKey].count++;
             }
-        }
-    });
 
-    const sortedDates = Object.keys(clickTrend)
-        .sort((a, b) => clickTrend[a].date - clickTrend[b].date);
-    
-    const trendLabels = sortedDates.map(k => clickTrend[k].label);
-    const trendData = sortedDates.map(k => clickTrend[k].count);
+            // 3. Device Stats
+            const device = h.device || 'Desktop';
+            if (deviceStats[device] !== undefined) deviceStats[device]++;
+            else deviceStats['Desktop']++;
 
-    const deviceStats = { Desktop: 0, Mobile: 0, Tablet: 0, Bot: 0 };
-    history.forEach(entry => {
-        const device = entry.device || 'Desktop';
-        deviceStats[device] = (deviceStats[device] || 0) + 1;
-    });
+            // 4. Source/Referrer
+            const source = h.referrer || 'Direct';
+            sourceStats[source] = (sourceStats[source] || 0) + 1;
 
-    const sourceStats = {};
-    history.forEach(entry => {
-        const source = entry.referrer || 'Direct';
-        sourceStats[source] = (sourceStats[source] || 0) + 1;
-    });
-
-    const topSources = Object.entries(sourceStats)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5);
-
-    const hourlyStats = Array(24).fill(0);
-    const hourlyUniqueIPs = Array(24).fill(null).map(() => new Set());
-    
-    history.forEach(entry => {
-        if (entry.timestamp && entry.ip) {
-            const hour = new Date(entry.timestamp).getHours();
+            // 5. Hourly Stats
+            const hour = dateObj.getHours();
             hourlyStats[hour]++;
-            hourlyUniqueIPs[hour].add(entry.ip);
-        }
-    });
-    
-    const hourlyUnique = hourlyUniqueIPs.map(set => set.size);
+            if (ip !== 'Unknown') hourlyUniqueIPs[hour].add(ip);
 
-    const cityData = {};
-    const stateData = {};
-    const countryData = {};
+            // 6. Geographic Data
+            if (h.location && h.location !== 'Unknown') {
+                const parts = h.location.split(',').map(s => s.trim());
+                const city = parts[0] || 'Unknown';
+                const countryCode = parts[1] || 'Unknown';
+                const country = COUNTRY_CODE_MAP[countryCode] || countryCode;
 
-    const stateCodeMap = {
-        'AN': 'Andaman and Nicobar', 'AP': 'Andhra Pradesh', 'AR': 'Arunachal Pradesh',
-        'AS': 'Assam', 'BR': 'Bihar', 'CH': 'Chandigarh', 'CT': 'Chhattisgarh',
-        'DD': 'Daman and Diu', 'DL': 'Delhi', 'DN': 'Dadra and Nagar Haveli',
-        'GA': 'Goa', 'GJ': 'Gujarat', 'HP': 'Himachal Pradesh', 'HR': 'Haryana',
-        'JH': 'Jharkhand', 'JK': 'Jammu and Kashmir', 'KA': 'Karnataka',
-        'KL': 'Kerala', 'LA': 'Ladakh', 'LD': 'Lakshadweep', 'MH': 'Maharashtra',
-        'ML': 'Meghalaya', 'MN': 'Manipur', 'MP': 'Madhya Pradesh', 'MZ': 'Mizoram',
-        'NL': 'Nagaland', 'OR': 'Odisha', 'PB': 'Punjab', 'PY': 'Puducherry',
-        'RJ': 'Rajasthan', 'SK': 'Sikkim', 'TN': 'Tamil Nadu', 'TG': 'Telangana',
-        'TR': 'Tripura', 'UP': 'Uttar Pradesh', 'UT': 'Uttarakhand', 'WB': 'West Bengal',
-        'CA': 'California', 'NY': 'New York', 'TX': 'Texas', 'FL': 'Florida',
-        'IL': 'Illinois', 'PA': 'Pennsylvania', 'OH': 'Ohio',
-        'ENG': 'England', 'SCT': 'Scotland', 'WLS': 'Wales', 'NIR': 'Northern Ireland'
-    };
+                // City
+                if (!cityData[city]) cityData[city] = { total: 0, ips: new Set() };
+                cityData[city].total++;
+                cityData[city].ips.add(ip);
 
-    const countryCodeMap = {
-        'IN': 'India', 'CN': 'China', 'JP': 'Japan', 'KR': 'South Korea',
-        'PK': 'Pakistan', 'BD': 'Bangladesh', 'ID': 'Indonesia', 'TH': 'Thailand',
-        'VN': 'Vietnam', 'PH': 'Philippines', 'MY': 'Malaysia', 'SG': 'Singapore',
-        'MM': 'Myanmar', 'KH': 'Cambodia', 'LK': 'Sri Lanka', 'NP': 'Nepal',
-        'AF': 'Afghanistan', 'IQ': 'Iraq', 'IR': 'Iran', 'SA': 'Saudi Arabia',
-        'AE': 'United Arab Emirates', 'IL': 'Israel', 'TR': 'Turkey', 'KZ': 'Kazakhstan',
-        'GB': 'United Kingdom', 'DE': 'Germany', 'FR': 'France', 'IT': 'Italy',
-        'ES': 'Spain', 'NL': 'Netherlands', 'BE': 'Belgium', 'CH': 'Switzerland',
-        'AT': 'Austria', 'SE': 'Sweden', 'NO': 'Norway', 'DK': 'Denmark',
-        'FI': 'Finland', 'PL': 'Poland', 'RU': 'Russia', 'UA': 'Ukraine',
-        'RO': 'Romania', 'GR': 'Greece', 'PT': 'Portugal', 'CZ': 'Czech Republic',
-        'HU': 'Hungary', 'IE': 'Ireland', 'SK': 'Slovakia', 'BG': 'Bulgaria',
-        'US': 'United States', 'CA': 'Canada', 'MX': 'Mexico',
-        'BR': 'Brazil', 'AR': 'Argentina', 'CO': 'Colombia', 'PE': 'Peru',
-        'VE': 'Venezuela', 'CL': 'Chile', 'EC': 'Ecuador', 'BO': 'Bolivia',
-        'ZA': 'South Africa', 'NG': 'Nigeria', 'EG': 'Egypt', 'KE': 'Kenya',
-        'ET': 'Ethiopia', 'GH': 'Ghana', 'TZ': 'Tanzania', 'UG': 'Uganda',
-        'DZ': 'Algeria', 'MA': 'Morocco', 'SD': 'Sudan',
-        'AU': 'Australia', 'NZ': 'New Zealand', 'FJ': 'Fiji', 'PG': 'Papua New Guinea',
-        'JM': 'Jamaica', 'TT': 'Trinidad and Tobago', 'CR': 'Costa Rica',
-        'PA': 'Panama', 'GT': 'Guatemala', 'HN': 'Honduras',
-        'JO': 'Jordan', 'LB': 'Lebanon', 'SY': 'Syria', 'YE': 'Yemen',
-        'OM': 'Oman', 'KW': 'Kuwait', 'QA': 'Qatar', 'BH': 'Bahrain'
-    };
-
-    history.forEach(entry => {
-        if (entry.location && entry.location !== 'Unknown') {
-            const parts = entry.location.split(',').map(s => s.trim());
-            const city = parts[0] || 'Unknown';
-            const countryCode = parts[1] || 'Unknown';
-            const country = countryCodeMap[countryCode] || countryCode;
-
-            if (!cityData[city]) {
-                cityData[city] = { total: 0, ips: new Set() };
+                // Country
+                if (!countryData[country]) countryData[country] = { total: 0, ips: new Set() };
+                countryData[country].total++;
+                countryData[country].ips.add(ip);
             }
-            cityData[city].total++;
-            if (entry.ip) cityData[city].ips.add(entry.ip);
 
-            if (!countryData[country]) {
-                countryData[country] = { total: 0, ips: new Set() };
+            // 7. Region/State Data
+            if (h.region && h.region !== 'Unknown') {
+                const regionName = STATE_CODE_MAP[h.region] || h.region;
+                if (!stateData[regionName]) stateData[regionName] = { total: 0, ips: new Set() };
+                stateData[regionName].total++;
+                stateData[regionName].ips.add(ip);
             }
-            countryData[country].total++;
-            if (entry.ip) countryData[country].ips.add(entry.ip);
-        }
 
-        if (entry.region && entry.region !== 'Unknown') {
-            const regionName = stateCodeMap[entry.region] || entry.region;
-            if (!stateData[regionName]) {
-                stateData[regionName] = { total: 0, ips: new Set() };
-            }
-            stateData[regionName].total++;
-            if (entry.ip) stateData[regionName].ips.add(entry.ip);
-        }
-    });
-
-    const topCities = Object.entries(cityData)
-        .map(([name, data]) => ({
-            name,
-            total: data.total,
-            unique: data.ips.size
-        }))
-        .sort((a, b) => b.total - a.total)
-        .slice(0, 10);
-    
-    const topStates = Object.entries(stateData)
-        .map(([name, data]) => ({
-            name,
-            total: data.total,
-            unique: data.ips.size
-        }))
-        .sort((a, b) => b.total - a.total)
-        .slice(0, 10);
-    
-    const topCountries = Object.entries(countryData)
-        .map(([name, data]) => ({
-            name,
-            total: data.total,
-            unique: data.ips.size
-        }))
-        .sort((a, b) => b.total - a.total)
-        .slice(0, 10);
-
-    const heatmapPoints = [];
-    const locationData = {};
-
-    history.forEach(entry => {
-        if (entry.latitude && entry.longitude) {
-            const key = `${entry.latitude},${entry.longitude}`;
-            
-            if (!locationData[key]) {
-                locationData[key] = {
-                    totalClicks: 0,
-                    uniqueIPs: new Set(),
-                    location: entry.location || 'Unknown',
-                    lat: entry.latitude,
-                    lng: entry.longitude
-                };
-            }
-            
-            locationData[key].totalClicks++;
-            if (entry.ip) {
-                locationData[key].uniqueIPs.add(entry.ip);
+            // 8. Heatmap Data
+            if (h.latitude && h.longitude) {
+                const key = `${h.latitude},${h.longitude}`;
+                if (!locationHeatmap[key]) {
+                    locationHeatmap[key] = {
+                        total: 0, uniqueIPs: new Set(),
+                        loc: h.location || 'Unknown',
+                        lat: h.latitude, lng: h.longitude
+                    };
+                }
+                locationHeatmap[key].total++;
+                locationHeatmap[key].uniqueIPs.add(ip);
             }
         }
-    });
+        // --- END MASTER LOOP ---
 
-    const maxTotal = Math.max(...Object.values(locationData).map(d => d.totalClicks), 1);
-    const maxUnique = Math.max(...Object.values(locationData).map(d => d.uniqueIPs.size), 1);
+        // Formatting Data for Frontend
+        const sortedTrend = Object.values(clickTrendMap).sort((a, b) => a.date - b.date);
+        const topSources = Object.entries(sourceStats).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        const hourlyUnique = hourlyUniqueIPs.map(set => set.size);
 
-    Object.values(locationData).forEach(data => {
-        heatmapPoints.push({
-            lat: data.lat,
-            lng: data.lng,
-            location: data.location,
-            totalClicks: data.totalClicks,
-            uniqueVisitors: data.uniqueIPs.size,
-            intensityTotal: data.totalClicks / maxTotal,
-            intensityUnique: data.uniqueIPs.size / maxUnique
-        });
-    });
+        // Helper to format map data lists
+        const formatMapData = (dataObj) => Object.entries(dataObj)
+            .map(([name, d]) => ({ name, total: d.total, unique: d.ips.size }))
+            .sort((a, b) => b.total - a.total).slice(0, 10);
 
-    //MASKED IP in Recent Activity
-    const recentActivity = history
-        .slice(-50)
-        .reverse()
-        .map(entry => ({
-            timestamp: entry.timestamp,
-            location: entry.location || 'Unknown',
-            referrer: entry.referrer || 'Direct',
-            device: entry.device || 'Desktop',
-            ip: maskIP(entry.ip)  // ✅ MASKED
+        // Heatmap Processing
+        const maxTotal = Math.max(...Object.values(locationHeatmap).map(d => d.total), 1);
+        const maxUnique = Math.max(...Object.values(locationHeatmap).map(d => d.uniqueIPs.size), 1);
+        
+        const heatmapPoints = Object.values(locationHeatmap).map(d => ({
+            lat: d.lat, lng: d.lng, location: d.loc,
+            totalClicks: d.total, uniqueVisitors: d.uniqueIPs.size,
+            intensityTotal: d.total / maxTotal,
+            intensityUnique: d.uniqueIPs.size / maxUnique
         }));
 
-    return res.render("analytics", {
-        page: 'analytics',
-        shortId,
-        redirectUrl: entry.redirectUrl,
-        totalClicks,
-        uniqueTotal,
-        clicksToday,
-        uniqueToday,
-        trendLabels: JSON.stringify(trendLabels),
-        trendData: JSON.stringify(trendData),
-        deviceStats: JSON.stringify([
-            deviceStats.Desktop, 
-            deviceStats.Mobile, 
-            deviceStats.Tablet, 
-            deviceStats.Bot
-        ]),
-        hourlyStats: JSON.stringify(hourlyStats),
-        hourlyUnique: JSON.stringify(hourlyUnique),
-        sourceLabels: JSON.stringify(topSources.map(s => s[0])),
-        sourceData: JSON.stringify(topSources.map(s => s[1])),
-        topCities: JSON.stringify(topCities),
-        topStates: JSON.stringify(topStates),
-        topCountries: JSON.stringify(topCountries),
-        heatmapPoints: JSON.stringify(heatmapPoints),
-        maxTotalClicks: maxTotal,  
-        maxUniqueVisitors: maxUnique, 
-        recentActivity
-    });
+        // Recent Activity (Last 50)
+        const recentActivity = history.slice(-50).reverse().map(h => ({
+            timestamp: h.timestamp,
+            location: h.location || 'Unknown',
+            referrer: h.referrer || 'Direct',
+            device: h.device || 'Desktop',
+            ip: maskIP(h.ip)
+        }));
+
+        return res.render("analytics", {
+            page: 'analytics',
+            shortId,
+            redirectUrl: entry.redirectUrl,
+            totalClicks: history.length,
+            uniqueTotal: uniqueIPsTotal.size,
+            clicksToday,
+            uniqueToday: uniqueIPsToday.size,
+            
+            trendLabels: JSON.stringify(sortedTrend.map(t => t.label)),
+            trendData: JSON.stringify(sortedTrend.map(t => t.count)),
+            deviceStats: JSON.stringify([deviceStats.Desktop, deviceStats.Mobile, deviceStats.Tablet, deviceStats.Bot]),
+            hourlyStats: JSON.stringify(hourlyStats),
+            hourlyUnique: JSON.stringify(hourlyUnique),
+            sourceLabels: JSON.stringify(topSources.map(s => s[0])),
+            sourceData: JSON.stringify(topSources.map(s => s[1])),
+            
+            topCities: JSON.stringify(formatMapData(cityData)),
+            topStates: JSON.stringify(formatMapData(stateData)),
+            topCountries: JSON.stringify(formatMapData(countryData)),
+            
+            heatmapPoints: JSON.stringify(heatmapPoints),
+            maxTotalClicks: maxTotal,
+            maxUniqueVisitors: maxUnique,
+            recentActivity
+        });
+
+    } catch (err) {
+        console.error("Analytics Page Error:", err);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
+// ==========================================
+// 4. HELPERS (Tracking & Detection)
+// ==========================================
+
+async function trackVisit(shortId, req) {
+    const userIp = getClientIP(req);  
+    const geoData = getGeolocation(userIp);
+    const userAgentString = req.headers['user-agent'] || '';
+    
+    // Construct the visit object
+    const visitEntry = {
+        timestamp: Date.now(),
+        device: getDeviceType(userAgentString),
+        ip: userIp,  
+        location: geoData.location,
+        referrer: getReferrerSource(req),
+        latitude: geoData.latitude,
+        longitude: geoData.longitude,
+        region: geoData.region
+    };
+
+    // Atomic Push to DB
+    await URLModel.findOneAndUpdate(
+        { shortId },
+        { $push: { visitHistory: visitEntry } }
+    );
+}
+
+// ✅ FIXED: Render/Proxy IP Logic
+function getClientIP(req) {
+    // Check x-forwarded-for (Standard for Render/Heroku/AWS)
+    const xForwardedFor = req.headers['x-forwarded-for'];
+    let ip;
+
+    if (xForwardedFor) {
+        // First IP is the client, others are proxies
+        ip = xForwardedFor.split(',')[0].trim();
+    } else {
+        ip = req.connection.remoteAddress || 
+             req.socket.remoteAddress || 
+             requestIp.getClientIp(req);
+    }
+    
+    if (ip && ip.startsWith('::ffff:')) {
+        ip = ip.replace('::ffff:', '');
+    }
+    
+    // 🧪 DEV MODE: Mock IP for Localhost to test Maps
+    // If you see 127.0.0.1, it swaps it for a generic Indian IP
+    if (ip === '::1' || ip === '127.0.0.1' || ip === 'localhost') {
+        return '110.227.199.146'; 
+    }
+    
+    return ip;
+}
+
+// ✅ FIXED: Improved Regex for Devices
+function getDeviceType(userAgent) {
+    if (!userAgent) return 'Desktop';
+    const ua = userAgent.toLowerCase();
+
+    // 1. Bots
+    if (ua.includes('bot') || ua.includes('crawl') || ua.includes('spider') || ua.includes('googlebot')) {
+        return 'Bot';
+    }
+    // 2. Mobile (Phones)
+    if (ua.includes('mobile') || ua.includes('android') || ua.includes('iphone') || ua.includes('ipod')) {
+        return 'Mobile';
+    }
+    // 3. Tablets (iPads often hide as Macintosh in standard libs, we catch them here)
+    if (ua.includes('tablet') || ua.includes('ipad') || (ua.includes('macintosh') && ua.includes('touch'))) {
+        return 'Tablet';
+    }
+    // 4. Default
+    return 'Desktop';
+}
+
+function getGeolocation(ip) {
+    const geo = geoip.lookup(ip);
+    
+    if (!geo) {
+        return { location: 'Unknown', latitude: 0, longitude: 0, region: 'Unknown' };
+    }
+    
+    const city = geo.city || 'Unknown';
+    const country = geo.country || 'Unknown';
+    const region = geo.region || 'Unknown';
+    
+    let location = 'Unknown';
+    if (city !== 'Unknown' && country !== 'Unknown') {
+        location = `${city}, ${country}`;
+    } else if (country !== 'Unknown') {
+        location = country;
+    } else if (region !== 'Unknown') {
+        // Fallback to State if city is missing
+        location = STATE_CODE_MAP[region] || region; 
+    }
+    
+    return {
+        location,
+        latitude: geo.ll?.[0] || 0,
+        longitude: geo.ll?.[1] || 0,
+        region
+    };
+}
+
+function getReferrerSource(req) {
+    const manualSource = req.query.source || req.query.utm_source;
+    if (manualSource) return manualSource;
+
+    const referrerHeader = req.headers['referer'] || req.headers['referrer'];
+    if (!referrerHeader) return 'Direct';
+
+    try {
+        const urlObj = new URL(referrerHeader);
+        const hostname = urlObj.hostname.replace(/^www\./, '');
+        const currentHost = req.get('host').replace(/^www\./, '');
+        
+        if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === currentHost) {
+            return 'Direct';
+        }
+        return hostname;
+    } catch (e) {
+        return 'Direct';
+    }
+}
+
+function maskIP(ip) {
+    if (!ip || ip === 'Unknown') return 'Unknown';
+    if (ip.includes('.')) { 
+        const parts = ip.split('.');
+        if (parts.length === 4) return `${parts[0]}.${parts[1]}.xx.xx`;
+    }
+    if (ip.includes(':')) { 
+        const parts = ip.split(':');
+        if (parts.length >= 2) return `${parts[0]}:${parts[1]}:xx:xx`;
+    }
+    return 'xx.xx.xx.xx';
 }
 
 module.exports = { 
