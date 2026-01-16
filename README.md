@@ -7,11 +7,12 @@
 ![EJS](https://img.shields.io/badge/EJS-8C8C8C?style=for-the-badge&logo=ejs&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ![bcrypt](https://img.shields.io/badge/bcrypt-00599C?style=for-the-badge)
-![Live Demo](https://img.shields.io/badge/Live%20Demo-Coming%20Soon-blueviolet?style=for-the-badge)
+
+![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-brightgreen?style=for-the-badge)
 
 A modern, production-ready URL shortener built with **Node.js**, **Express**, and **MongoDB**. Features a high-performance JWT-based authentication system, bcrypt password hashing, a glassmorphism dashboard, and real-time link analytics.
 
-> **Live Demo:** [Coming Soon](#)
+> **Live Demo:** [https://shorturl-ejvn.onrender.com/](https://shorturl-ejvn.onrender.com/)
 
 ---
 
@@ -25,12 +26,14 @@ A modern, production-ready URL shortener built with **Node.js**, **Express**, an
 - **Link Management:** View all your shortened links in one dashboard with quick actions
 - **Delete Links:** Remove unwanted links with one click
 
+
 ### Analytics & Tracking
 - **Click Analytics:** Track total clicks, unique visitors, and visit history
 - **Time-Based Insights:** Hourly breakdown charts and 30-day performance trends
 - **Geographic Tracking:** Interactive heatmaps showing clicks by location (city, state, country)
 - **Device Analytics:** Desktop, mobile, tablet, and bot detection
 - **Referral Sources:** Track traffic from WhatsApp, Telegram, LinkedIn, Google, and more
+- **OS Detection:** Detects and tracks the operating system of visitors for enhanced analytics
 
 ### Security
 - **Bcrypt Password Hashing:** All user passwords are securely hashed using bcrypt.

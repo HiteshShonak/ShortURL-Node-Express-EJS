@@ -2,7 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const { connectToDatabase } = require('./connection');
-const { logReqRes } = require('./middleware');
 const cookieParser = require('cookie-parser');
 const {checkAuthentication, restrictTo} = require('./middleware/auth');
 
@@ -25,7 +24,6 @@ app.set("views", path.resolve("./views"));
 
 // 4. Middleware
 app.use(express.static('public'));
-app.use(logReqRes('server.log'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false })); // This allows parsing form data
 app.use(cookieParser());
