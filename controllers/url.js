@@ -1,38 +1,8 @@
 const { nanoid } = require('nanoid');
 const URLModel = require('../models/url');
 const requestIp = require('request-ip');
-const geoip = require('geoip-lite');
-
-// ==========================================
-// 1. STATIC DATA MAPS
-// ==========================================
-const STATE_CODE_MAP = {
-    'AN': 'Andaman and Nicobar', 'AP': 'Andhra Pradesh', 'AR': 'Arunachal Pradesh',
-    'AS': 'Assam', 'BR': 'Bihar', 'CH': 'Chandigarh', 'CT': 'Chhattisgarh',
-    'DD': 'Daman and Diu', 'DL': 'Delhi', 'DN': 'Dadra and Nagar Haveli',
-    'GA': 'Goa', 'GJ': 'Gujarat', 'HP': 'Himachal Pradesh', 'HR': 'Haryana',
-    'JH': 'Jharkhand', 'JK': 'Jammu and Kashmir', 'KA': 'Karnataka',
-    'KL': 'Kerala', 'LA': 'Ladakh', 'LD': 'Lakshadweep', 'MH': 'Maharashtra',
-    'ML': 'Meghalaya', 'MN': 'Manipur', 'MP': 'Madhya Pradesh', 'MZ': 'Mizoram',
-    'NL': 'Nagaland', 'OR': 'Odisha', 'PB': 'Punjab', 'PY': 'Puducherry',
-    'RJ': 'Rajasthan', 'SK': 'Sikkim', 'TN': 'Tamil Nadu', 'TG': 'Telangana',
-    'TR': 'Tripura', 'UP': 'Uttar Pradesh', 'UT': 'Uttarakhand', 'WB': 'West Bengal',
-    'CA': 'California', 'NY': 'New York', 'TX': 'Texas', 'FL': 'Florida', 'ENG': 'England'
-};
-
-const COUNTRY_CODE_MAP = {
-    'IN': 'India', 'US': 'United States', 'GB': 'United Kingdom', 'CA': 'Canada',
-    'AU': 'Australia', 'DE': 'Germany', 'FR': 'France', 'CN': 'China',
-    'JP': 'Japan', 'RU': 'Russia', 'BR': 'Brazil', 'IT': 'Italy',
-    'ES': 'Spain', 'NL': 'Netherlands', 'SG': 'Singapore', 'AE': 'UAE',
-    'SA': 'Saudi Arabia', 'NP': 'Nepal', 'LK': 'Sri Lanka', 'BD': 'Bangladesh',
-    'PK': 'Pakistan', 'ID': 'Indonesia', 'TH': 'Thailand', 'VN': 'Vietnam',
-    'PH': 'Philippines', 'MY': 'Malaysia'
-};
-
-// ==========================================
-// 2. CONTROLLER FUNCTIONS
-// ==========================================
+const axios = require('axios'); 
+const { STATE_CODE_MAP, COUNTRY_CODE_MAP } = require('../utils/locationMap');
 
 async function handleGenerateNewShortUrl(req, res) {
     try {
@@ -61,8 +31,6 @@ async function handleGenerateNewShortUrl(req, res) {
 async function handleRedirectToOriginalUrl(req, res) {
     const shortId = req.params.shortId;
     
-    // 📢 LOG: Proof the route was hit
-    console.log(`\n🚀 [ROUTE HIT] User requested ShortID: ${shortId}`);
 
     const entry = await URLModel.findOne({ shortId }).select('redirectUrl');
 
@@ -71,18 +39,9 @@ async function handleRedirectToOriginalUrl(req, res) {
         return res.status(404).json({ error: 'Short URL not found' });
     }
 
-    // 📢 LOG: DB success
-    console.log(`✅ [FOUND] Redirecting to: ${entry.redirectUrl}`);
-
-    // Redirect immediately
     res.redirect(entry.redirectUrl);
 
-    // 📢 LOG: Start background tracking
-    try {
-        await trackVisit(shortId, req);
-    } catch (err) {
-        console.error(`❌ [TRACKING ERROR] ${err.message}`);
-    }
+    trackVisit(shortId, req).catch(err => console.error(`❌ [TRACKING ERROR] ${err.message}`));
 }
 
 async function handleDeleteURL(req, res) {
@@ -95,10 +54,6 @@ async function handleDeleteURL(req, res) {
         return res.status(500).json({ error: "Server Error" });
     }
 }
-
-// ==========================================
-// 3. ANALYTICS ENGINE
-// ==========================================
 
 async function handleGetAnalyticsPage(req, res) {
     try {
@@ -187,7 +142,6 @@ async function handleGetAnalyticsPage(req, res) {
         const topSources = Object.entries(sourceStats).sort((a, b) => b[1] - a[1]).slice(0, 5);
         const formatMapData = (dataObj) => Object.entries(dataObj).map(([name, d]) => ({ name, total: d.total, unique: d.ips.size })).sort((a, b) => b.total - a.total).slice(0, 10);
         
-        // ✅ FIXED: Defined hourlyUnique properly
         const hourlyUnique = hourlyUniqueIPs.map(set => set.size);
 
         const maxTotal = Math.max(...Object.values(locationHeatmap).map(d => d.total), 1);
@@ -222,28 +176,25 @@ async function handleGetAnalyticsPage(req, res) {
     }
 }
 
-// ==========================================
-// 4. HELPERS (Tracking & Detection)
-// ==========================================
 
 async function trackVisit(shortId, req) {
-    const userIp = getClientIP(req);  
-    const geoData = getGeolocation(userIp);
     const userAgentString = req.headers['user-agent'] || '';
     
-    // --- 🔍 DEBUG: Log the User-Agent ---
-    console.log("-----------------------------------------");
-    console.log("🔍 [TRACKER] New Visit Details:");
-    console.log(`📱 Raw User-Agent: "${userAgentString}"`);
-    const detectedOS = getOSType(userAgentString);
-    console.log(`⚙️ Detected OS: "${detectedOS}"`);
-    console.log("-----------------------------------------");
-    // ------------------------------------
+    const deviceType = getDeviceType(userAgentString);
+    if (deviceType === 'Bot') {
+        console.log("🤖 Bot detected, skipping track.");
+        return; 
+    }
+
+    const userIp = getClientIP(req);  
+    
+    const geoData = await getGeolocation(userIp);
+
 
     const visitEntry = {
         timestamp: Date.now(),
-        device: getDeviceType(userAgentString),
-        os: detectedOS, 
+        device: deviceType,
+        os: getOSType(userAgentString), 
         ip: userIp,  
         location: geoData.location,
         referrer: getReferrerSource(req),
@@ -258,17 +209,14 @@ async function trackVisit(shortId, req) {
     );
 }
 
-// ✅ IMPROVED: Aggressive OS Detection
 function getOSType(userAgent) {
     if (!userAgent) return 'Unknown';
     const ua = userAgent.toLowerCase();
 
-    // Mobile / Tablets
     if (ua.includes('android')) return 'Android';
     if (ua.includes('iphone') || ua.includes('ipad') || ua.includes('ipod')) return 'iOS';
     if (ua.includes('windows phone')) return 'Windows Phone';
 
-    // Desktop
     if (ua.includes('win')) return 'Windows'; 
     if (ua.includes('mac') || ua.includes('darwin')) return 'macOS'; 
     if (ua.includes('cros')) return 'Chrome OS'; 
@@ -292,24 +240,47 @@ function getClientIP(req) {
     const xForwardedFor = req.headers['x-forwarded-for'];
     let ip = xForwardedFor ? xForwardedFor.split(',')[0].trim() : (req.connection.remoteAddress || req.socket.remoteAddress || requestIp.getClientIp(req));
     if (ip && ip.startsWith('::ffff:')) ip = ip.replace('::ffff:', '');
-    if (ip === '::1' || ip === '127.0.0.1' || ip === 'localhost') return '110.227.199.146'; 
+    
+    if (ip === '::1' || ip === '127.0.0.1' || ip === 'localhost') return '127.0.0.1'; 
+    
     return ip;
 }
 
-function getGeolocation(ip) {
-    const geo = geoip.lookup(ip);
-    if (!geo) return { location: 'Unknown', latitude: 0, longitude: 0, region: 'Unknown' };
-    
-    const city = geo.city || 'Unknown';
-    const country = geo.country || 'Unknown';
-    const region = geo.region || 'Unknown';
-    
-    let location = 'Unknown';
-    if (city !== 'Unknown' && country !== 'Unknown') location = `${city}, ${country}`;
-    else if (country !== 'Unknown') location = country;
-    else if (region !== 'Unknown') location = STATE_CODE_MAP[region] || region; 
-    
-    return { location, latitude: geo.ll?.[0] || 0, longitude: geo.ll?.[1] || 0, region };
+async function getGeolocation(ip) {
+    if (ip === '127.0.0.1' || ip === '::1') {
+        ip = '110.227.199.146'; 
+    }
+
+    try {
+        const response = await axios.get(`http://ip-api.com/json/${ip}`);
+        const data = response.data;
+
+        if (data.status === 'fail') {
+            return { location: 'Unknown', latitude: 0, longitude: 0, region: 'Unknown' };
+        }
+
+        const city = data.city || 'Unknown';
+        const region = data.region || 'Unknown';
+        const country = data.countryCode || 'Unknown';
+
+        let location = 'Unknown';
+        if (city !== 'Unknown' && region !== 'Unknown') {
+            location = `${city}, ${region}`; 
+        } else {
+            location = data.country || 'Unknown';
+        }
+        
+        return { 
+            location, 
+            latitude: data.lat || 0, 
+            longitude: data.lon || 0, 
+            region: region 
+        };
+
+    } catch (error) {
+        console.error("Geo API Error:", error.message);
+        return { location: 'Unknown', latitude: 0, longitude: 0, region: 'Unknown' };
+    }
 }
 
 function getReferrerSource(req) {
