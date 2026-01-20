@@ -1,13 +1,8 @@
-// ========================================
-// ANALYTICS CHARTS - All Chart.js Visualizations
-// ========================================
+// Chart setup
+document.addEventListener("DOMContentLoaded", function () {
+    Chart.defaults.font.family = "'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif";
+    Chart.defaults.color = '#475569';
 
-document.addEventListener("DOMContentLoaded", function() {
-    // Set Chart.js defaults
-    Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
-    Chart.defaults.color = '#64748b';
-
-    // Use data already parsed in head (no JSON.parse needed!)
     const trendLabelsData = trendLabels;
     const trendDataValues = trendData;
     const deviceData = deviceStats;
@@ -17,17 +12,16 @@ document.addEventListener("DOMContentLoaded", function() {
     const sourceDataValues = sourceData;
     const heatmapPointsData = heatmapPoints;
 
-    // Store globally for map scripts
     window.heatmapPoints = heatmapPointsData;
     window.hourlyData = hourlyDataLocal;
     window.hourlyUnique = hourlyUniqueLocal;
 
-    // === 1. LINE CHART ===
+    // Line chart
     const ctx = document.getElementById('clickChart').getContext('2d');
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(79, 70, 229, 0.5)');
-    gradient.addColorStop(1, 'rgba(79, 70, 229, 0.0)');
-    
+    gradient.addColorStop(0, 'rgba(67, 56, 202, 0.4)');
+    gradient.addColorStop(1, 'rgba(67, 56, 202, 0.0)');
+
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -35,12 +29,13 @@ document.addEventListener("DOMContentLoaded", function() {
             datasets: [{
                 label: 'Clicks',
                 data: trendDataValues,
-                borderColor: '#4f46e5',
+                borderColor: '#4338CA',
                 backgroundColor: gradient,
                 borderWidth: 3,
                 pointBackgroundColor: '#fff',
-                pointBorderColor: '#4f46e5',
+                pointBorderColor: '#4338CA',
                 pointRadius: 5,
+                pointHoverRadius: 7,
                 fill: true,
                 tension: 0.4
             }]
@@ -48,56 +43,75 @@ document.addEventListener("DOMContentLoaded", function() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#0F172A',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    padding: 12,
+                    cornerRadius: 8,
+                    displayColors: false
+                }
+            },
             scales: {
-                y: { beginAtZero: true, grid: { borderDash: [5, 5], color: '#f1f5f9' } },
-                x: { grid: { display: false } }
+                y: {
+                    beginAtZero: true,
+                    grid: { borderDash: [5, 5], color: '#F1F5F9', drawBorder: false },
+                    ticks: { font: { weight: '600' } }
+                },
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { weight: '500' } }
+                }
             }
         }
     });
 
-    // === 2. DEVICE DONUT CHART ===
+    // Device donut
     new Chart(document.getElementById('deviceChart').getContext('2d'), {
         type: 'doughnut',
         data: {
             labels: ['Desktop', 'Mobile', 'Tablet', 'Bot'],
             datasets: [{
                 data: deviceData,
-                backgroundColor: ['#4f46e5', '#ec4899', '#3b82f6', '#6b7280'],
+                backgroundColor: ['#4338CA', '#0EA5E9', '#6366F1', '#94A3B8'],
                 borderWidth: 0,
-                hoverOffset: 4
+                hoverOffset: 6
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { 
-                legend: { 
-                    position: 'bottom', 
-                    labels: { usePointStyle: true, padding: 15 } 
-                } 
+            cutout: '65%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { usePointStyle: true, padding: 15, font: { weight: '600' } }
+                },
+                tooltip: { backgroundColor: '#0F172A', padding: 12, cornerRadius: 8 }
             }
         }
     });
 
-    // === 3. HOURLY CHART (Dual Bar) ===
+    // Hourly bar
     new Chart(document.getElementById('hourlyChart').getContext('2d'), {
         type: 'bar',
         data: {
-            labels: Array.from({length: 24}, (_, i) => i + ':00'),
+            labels: Array.from({ length: 24 }, (_, i) => i + ':00'),
             datasets: [
                 {
                     label: 'Total Clicks',
                     data: hourlyDataLocal,
-                    backgroundColor: 'rgba(16, 185, 129, 0.75)',
+                    backgroundColor: 'rgba(14, 165, 233, 0.8)',
                     borderRadius: 6,
                     borderSkipped: false,
                     order: 2
                 },
                 {
-                    label: 'Unique Visitors', 
+                    label: 'Unique Visitors',
                     data: hourlyUniqueLocal,
-                    backgroundColor: 'rgba(139, 92, 246, 0.9)',
+                    backgroundColor: 'rgba(67, 56, 202, 0.9)',
                     borderRadius: 6,
                     borderSkipped: false,
                     order: 1
@@ -108,73 +122,47 @@ document.addEventListener("DOMContentLoaded", function() {
             responsive: true,
             maintainAspectRatio: false,
             interaction: { mode: 'index', intersect: false },
-            plugins: { 
-                legend: { 
+            plugins: {
+                legend: {
                     display: true,
                     position: 'top',
                     align: 'end',
-                    labels: {
-                        usePointStyle: true,
-                        pointStyle: 'circle',
-                        padding: 15,
-                        font: { size: 12, weight: '600' }
-                    }
+                    labels: { usePointStyle: true, pointStyle: 'circle', padding: 15, font: { size: 12, weight: '600' } }
                 },
                 tooltip: {
                     mode: 'index',
                     intersect: false,
-                    backgroundColor: 'rgba(30, 41, 59, 0.95)',
+                    backgroundColor: '#0F172A',
                     padding: 14,
                     titleFont: { size: 14, weight: 'bold' },
                     bodyFont: { size: 13 },
                     bodySpacing: 6,
                     borderColor: 'rgba(148, 163, 184, 0.3)',
                     borderWidth: 1,
+                    cornerRadius: 8,
                     callbacks: {
-                        title: function(context) {
-                            return `Hour ${context[0].label}`;
-                        },
-                        label: function(context) {
-                            const label = context.dataset.label || '';
-                            const value = context.parsed.y;
-                            const icon = context.datasetIndex === 0 ? '' : '';  
-                            return `${icon} ${label}: ${value}`;
-                        },
-                        afterBody: function(context) {
-                            const hour = context[0].dataIndex;
+                        title: (ctx) => `Hour ${ctx[0].label}`,
+                        label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y}`,
+                        afterBody: (ctx) => {
+                            const hour = ctx[0].dataIndex;
                             const total = hourlyDataLocal[hour];
                             const unique = hourlyUniqueLocal[hour];
                             if (total === 0) return 'Quality: No data';
-                            const quality = Math.round((unique / total) * 100);
-                            return `Quality Score: ${quality}% unique`;
+                            return `Quality Score: ${Math.round((unique / total) * 100)}% unique`;
                         }
                     }
                 }
             },
             scales: {
-                x: { 
-                    stacked: false, 
-                    grid: { display: false },
-                    ticks: { font: { size: 10 }, color: '#64748b' }
-                },
-                y: { 
-                    beginAtZero: true, 
-                    stacked: false,
-                    grid: { color: 'rgba(241, 245, 249, 0.8)' },
-                    ticks: { precision: 0, font: { size: 11 }, color: '#64748b' }
-                }
+                x: { stacked: false, grid: { display: false }, ticks: { font: { size: 10, weight: '500' }, color: '#64748B' } },
+                y: { beginAtZero: true, stacked: false, grid: { color: 'rgba(241, 245, 249, 0.8)', drawBorder: false }, ticks: { precision: 0, font: { size: 11, weight: '500' }, color: '#64748B' } }
             },
-            datasets: {
-                bar: {
-                    barPercentage: 0.9,
-                    categoryPercentage: 0.8
-                }
-            },
+            datasets: { bar: { barPercentage: 0.9, categoryPercentage: 0.8 } },
             grouped: false
         }
     });
 
-    // === 4. SOURCE BAR CHART ===
+    // Source bar
     new Chart(document.getElementById('sourceChart').getContext('2d'), {
         type: 'bar',
         data: {
@@ -182,8 +170,8 @@ document.addEventListener("DOMContentLoaded", function() {
             datasets: [{
                 label: 'Visits',
                 data: sourceDataValues,
-                backgroundColor: '#10b981',
-                borderRadius: 5,
+                backgroundColor: '#0EA5E9',
+                borderRadius: 6,
                 barThickness: 20
             }]
         },
@@ -191,25 +179,26 @@ document.addEventListener("DOMContentLoaded", function() {
             indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: {
+                legend: { display: false },
+                tooltip: { backgroundColor: '#0F172A', padding: 12, cornerRadius: 8 }
+            },
             scales: {
-                x: { grid: { display: false } },
-                y: { grid: { display: false } }
+                x: { grid: { display: false }, ticks: { font: { weight: '500' } } },
+                y: { grid: { display: false }, ticks: { font: { weight: '600' } } }
             }
         }
     });
 
-    // === 5. RENDER GEOGRAPHIC LISTS ===
+    // Geo lists
     renderGeoList(topCities, 'cityList');
     renderGeoList(topStates, 'stateList');
     renderGeoList(topCountries, 'countryList');
-
 });
 
-// Geographic list renderer function
 function renderGeoList(data, containerId) {
     const container = document.getElementById(containerId);
-    
+
     if (data.length === 0) {
         container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8;">No data available</div>';
         return;

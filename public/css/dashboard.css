@@ -1,30 +1,25 @@
-/* ========================================
-   DASHBOARD PAGE SPECIFIC STYLES
-   ======================================== */
+/* Dashboard page */
 
-/* === DASHBOARD BODY OVERRIDE === */
 .dashboard-body {
-  background-image: 
-    radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.05) 0%, transparent 20%),
-    radial-gradient(circle at 90% 80%, rgba(236, 72, 153, 0.05) 0%, transparent 20%);
+  background-color: var(--bg-color);
   display: flex;
   flex-direction: column;
 }
 
-/* === ANIMATIONS === */
 @keyframes float {
   0% {
     transform: translateY(0px);
   }
+
   50% {
     transform: translateY(-15px);
   }
+
   100% {
     transform: translateY(0px);
   }
 }
 
-/* === DASHBOARD CONTAINER === */
 .dashboard-container {
   flex: 1;
   display: flex;
@@ -35,11 +30,9 @@
 }
 
 .glass-card {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
   border-radius: 24px;
   padding: 60px 40px;
   max-width: 900px;
@@ -49,34 +42,32 @@
   gap: 50px;
 }
 
-/* === CONTENT SIDE === */
 .content-side {
   flex: 1;
 }
 
 h1 {
+  font-family: 'Outfit', sans-serif;
   font-size: clamp(2rem, 5vw, 3rem);
   line-height: 1.1;
   margin-bottom: clamp(12px, 2vw, 16px);
-  background: linear-gradient(135deg, var(--text-main) 0%, var(--primary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--text-main);
   letter-spacing: -1px;
 }
 
 h1 .highlight {
   color: var(--primary);
-  -webkit-text-fill-color: var(--primary);
 }
 
 p.subtitle {
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-size: clamp(1rem, 2vw, 1.15rem);
   color: var(--text-muted);
   margin-bottom: clamp(24px, 4vw, 32px);
   line-height: 1.6;
 }
 
-/* === BUTTONS === */
+/* Buttons */
 .btn-group {
   display: flex;
   gap: clamp(12px, 2vw, 16px);
@@ -85,7 +76,8 @@ p.subtitle {
 
 .btn {
   padding: clamp(10px, 2vw, 14px) clamp(22px, 4vw, 32px);
-  border-radius: clamp(10px, 2vw, 12px);
+  border-radius: 12px;
+  font-family: 'Outfit', sans-serif;
   font-size: clamp(0.9rem, 1.8vw, 1rem);
   font-weight: 600;
   text-decoration: none;
@@ -98,39 +90,39 @@ p.subtitle {
 .btn-primary {
   background-color: var(--primary);
   color: white;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 4px 12px rgba(67, 56, 202, 0.25);
   border: none;
 }
 
 .btn-primary:hover {
   background-color: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(79, 70, 229, 0.4);
+  box-shadow: 0 8px 16px rgba(67, 56, 202, 0.3);
 }
 
 .btn-outline {
   background-color: transparent;
   color: var(--text-main);
-  border: 2px solid #e5e7eb;
+  border: 2px solid var(--border);
 }
 
 .btn-outline:hover {
   border-color: var(--text-main);
-  background-color: white;
+  background-color: var(--surface);
   transform: translateY(-2px);
 }
 
 .btn-logout {
-  color: #ef4444 !important;
-  border-color: #ef4444 !important;
+  color: var(--error) !important;
+  border-color: var(--error) !important;
 }
 
 .btn-logout:hover {
-  background-color: #fef2f2 !important;
-  border-color: #dc2626 !important;
+  background-color: #FEF2F2 !important;
+  border-color: #DC2626 !important;
 }
 
-/* === IMAGE SIDE === */
+/* Hero illustration */
 .image-side {
   flex: 1;
   display: flex;
@@ -143,62 +135,60 @@ p.subtitle {
   animation: float 6s ease-in-out infinite;
 }
 
-/* === RESPONSIVE DESIGN === */
-
-/* Tablet Adjustments */
+/* Tablet */
 @media (max-width: 850px) {
-    .glass-card {
-        flex-direction: column-reverse;
-        padding: 40px 24px;
-        text-align: center;
-    }
-    
-    .btn-group { 
-      justify-content: center; 
-      flex-wrap: wrap; 
-    }
-    
-    h1 { 
-      font-size: 2.5rem; 
-    }
-    
-    .hero-svg { 
-      max-width: 250px; 
-      margin-bottom: 20px; 
-    }
+  .glass-card {
+    flex-direction: column-reverse;
+    padding: 40px 24px;
+    text-align: center;
+  }
+
+  .btn-group {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  .hero-svg {
+    max-width: 250px;
+    margin-bottom: 20px;
+  }
 }
 
-/* Mobile Adjustments */
+/* Mobile */
 @media (max-width: 600px) {
-    .dashboard-body { 
-      padding-top: 90px; 
-    }
+  .dashboard-body {
+    padding-top: 90px;
+  }
 
-    .glass-card { 
-      padding: 30px 20px; 
-      gap: 30px; 
-    }
-    
-    h1 { 
-      font-size: 2rem; 
-    }
-    
-    p.subtitle { 
-      font-size: 1rem; 
-    }
-    
-    .btn { 
-      padding: 12px 24px; 
-      font-size: 0.95rem; 
-    }
-    
-    .btn-group { 
-      flex-direction: column; 
-      width: 100%; 
-    }
-    
-    .btn-group .btn { 
-      width: 100%; 
-      text-align: center; 
-    }
+  .glass-card {
+    padding: 30px 20px;
+    gap: 30px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  p.subtitle {
+    font-size: 1rem;
+  }
+
+  .btn {
+    padding: 12px 24px;
+    font-size: 0.95rem;
+  }
+
+  .btn-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-group .btn {
+    width: 100%;
+    text-align: center;
+  }
 }

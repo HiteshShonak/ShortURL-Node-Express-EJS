@@ -1,0 +1,155 @@
+/* Shared UI components */
+
+/* Card */
+.card {
+    background: var(--surface);
+    padding: 32px;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    margin-bottom: 32px;
+}
+
+/* Buttons */
+.btn {
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-block;
+    cursor: pointer;
+    border: none;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(67, 56, 202, 0.25);
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(67, 56, 202, 0.3);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--text-main);
+    border: 2px solid var(--border);
+}
+
+.btn-outline:hover {
+    border-color: var(--text-main);
+    background-color: var(--surface);
+    transform: translateY(-2px);
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 1.1rem;
+    padding: 6px;
+    border-radius: 6px;
+}
+
+.btn-icon:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+    transform: scale(1.1);
+}
+
+/* Form inputs */
+.input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    outline: none;
+    transition: all 0.2s ease;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+}
+
+.input:focus {
+    border-color: var(--primary);
+    background-color: var(--surface);
+    box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
+}
+
+.input::placeholder {
+    color: var(--text-muted);
+}
+
+/* Modal overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: var(--surface);
+    width: 90%;
+    max-width: 450px;
+    padding: 30px;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--border);
+    transform: scale(0.9);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1);
+    opacity: 1;
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: var(--bg-color);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    background: #FEE2E2;
+    color: var(--error);
+}

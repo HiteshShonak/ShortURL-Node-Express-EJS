@@ -1,0 +1,43 @@
+/* Design tokens */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+    /* Colors - Primary */
+    --primary: #4338CA;
+    --primary-hover: #3730A3;
+    --primary-light: #E0E7FF;
+
+    /* Colors - Secondary */
+    --secondary: #0EA5E9;
+    --secondary-light: #E0F2FE;
+
+    /* Colors - Background */
+    --bg-color: #F8FAFC;
+    --surface: #FFFFFF;
+
+    /* Colors - Text */
+    --text-main: #0F172A;
+    --text-muted: #475569;
+    --text-light: #64748B;
+
+    /* Colors - Border */
+    --border: #E2E8F0;
+    --border-light: #F1F5F9;
+
+    /* Colors - Status */
+    --success: #10B981;
+    --error: #EF4444;
+    --warning: #F59E0B;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+
+    /* Radius */
+    --radius: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+
+    /* Glass */
+    --glass: rgba(255, 255, 255, 0.85);
+}
