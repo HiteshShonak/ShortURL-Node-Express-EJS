@@ -14,7 +14,11 @@ async function handleUserSignup(req, res) {
         }
 
         const token = setUser(entry);
-        res.cookie('uid', token);
+        res.cookie('uid', token, {
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            sameSite: 'lax'
+        });
 
         return res.status(201).json({ status: 'success', redirect: '/' });
     } catch (error) {
@@ -42,7 +46,11 @@ async function handleUserLogin(req, res) {
         }
 
         const token = setUser(user);
-        res.cookie('uid', token);
+        res.cookie('uid', token, {
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+            httpOnly: true,
+            sameSite: 'lax'
+        });
 
         return res.status(200).json({ status: 'success', redirect: '/' });
 

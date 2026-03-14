@@ -7,7 +7,7 @@ function setUser(user) {
         email: user.email,
         name: user.name,
         role: user.role,
-    }, secretKey);
+    }, secretKey, { expiresIn: '7d' });
 }
 
 function getUser(token) {

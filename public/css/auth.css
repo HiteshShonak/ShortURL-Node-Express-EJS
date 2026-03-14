@@ -129,3 +129,48 @@
         font-size: 1.75rem;
     }
 }
+
+/* Password toggle */
+.password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper input {
+    padding-right: 48px !important;
+    box-sizing: border-box;
+}
+
+.toggle-password,
+.toggle-password:hover,
+.toggle-password:active,
+.toggle-password:focus {
+    transform: translateY(-50%) !important;
+}
+
+.toggle-password {
+    position: absolute !important;
+    right: 14px;
+    top: 50%;
+
+    /* Kill every card button style */
+    width: 20px !important;
+    height: 20px !important;
+    min-width: unset !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: none !important;
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    transition: none !important;
+
+    /* Look */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer;
+    color: #334155 !important;
+    outline: none;
+}
