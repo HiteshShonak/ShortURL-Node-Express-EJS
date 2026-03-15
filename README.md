@@ -235,10 +235,10 @@ npm start
 ![Dashboard](screenshots/Dashboard.png)
 
 ### Analytics — Charts & Trends
-![Analytics Charts](screenshots/analytics1.png)
+![Analytics Charts](screenshots/Analytics1.png)
 
 ### Analytics — Map & Activity
-![Analytics Map](screenshots/analytics2.png)
+![Analytics Map](screenshots/Analytics2.png)
 
 ### Login Page
 ![Login Page](screenshots/Login.png)
