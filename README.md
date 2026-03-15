@@ -7,12 +7,15 @@
 ![EJS](https://img.shields.io/badge/EJS-8C8C8C?style=for-the-badge&logo=ejs&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ![bcrypt](https://img.shields.io/badge/bcrypt-00599C?style=for-the-badge)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-brightgreen?style=for-the-badge&logo=googlechrome&logoColor=white)](https://shorturl-ejvn.onrender.com/)
 
-![Live Demo](https://img.shields.io/badge/Live%20Demo-Online-brightgreen?style=for-the-badge)
+A modern URL shortener built with **Node.js**, **Express**, and **MongoDB**. Features a JWT-based authentication system, bcrypt password hashing, a glassmorphism dashboard, and real-time link analytics.
 
-A modern, production-ready URL shortener built with **Node.js**, **Express**, and **MongoDB**. Features a high-performance JWT-based authentication system, bcrypt password hashing, a glassmorphism dashboard, and real-time link analytics.
-
-> **Live Demo:** [https://shorturl-ejvn.onrender.com/](https://shorturl-ejvn.onrender.com/)
+<p align="center">
+  <a href="https://shorturl-ejvn.onrender.com/" target="_blank">
+    <img src="https://img.shields.io/badge/Open%20Live%20App-shorturl--ejvn.onrender.com-4338CA?style=for-the-badge&labelColor=1e293b&color=4338CA" alt="Open Live App" height="36"/>
+  </a>
+</p>
 
 ---
 
@@ -37,7 +40,7 @@ A modern, production-ready URL shortener built with **Node.js**, **Express**, an
 
 ### Security
 - **Bcrypt Password Hashing:** All user passwords are securely hashed using bcrypt.
-- **JWT & Cookie Security:** Secure, stateless authentication with JWT and cookies.
+- **JWT & Cookie Security:** Secure, stateless authentication with JWT. Sessions persist for 7 days using `httpOnly`, `sameSite: lax` cookies.
 - **Environment Variables:** Sensitive data is managed via environment variables.
 
 ### User Experience
@@ -45,6 +48,8 @@ A modern, production-ready URL shortener built with **Node.js**, **Express**, an
 - **Responsive Design:** Fully optimized for mobile, tablet, and desktop views
 - **Social Sharing:** Direct share buttons for popular platforms with tracking parameters
 - **Real-time Updates:** Live analytics and instant link generation
+- **Password Visibility Toggle:** Eye icon on login and signup forms to show/hide password
+- **Persistent Sessions:** Stay logged in for 7 days — works reliably on mobile browsers
 
 ---
 
@@ -70,10 +75,8 @@ A modern, production-ready URL shortener built with **Node.js**, **Express**, an
 ### Utilities
 - **NanoID** - Unique ID generation
 - **Dotenv** - Environment variable management
-- **IP Geolocation** - Location tracking (ipinfo.io)
+- **IP Geolocation** - Location tracking ([ip-api.com](http://ip-api.com))
 - **User Agent Parser** - Device detection
-
----
 
 ---
 
@@ -85,8 +88,8 @@ url-shortener/
 │   ├── url.js                    # URL business logic
 │   └── user.js                   # User business logic
 ├── middleware/
-│   ├── auth.js                   # Authentication middleware
-│   └── index.js                  # Middleware exports
+│   ├── auth.js                   # Authentication & authorization middleware
+│   └── errorHandler.js           # Global error handling
 ├── models/
 │   ├── url.js                    # MongoDB schema for URLs
 │   └── user.js                   # MongoDB schema for users
@@ -206,7 +209,7 @@ npm start
 
 ### Static Pages
 * `GET /` - Home page
-* `GET /dashboard` - User dashboard (requires authentication)
+* `GET /dashboard` - User dashboard (shows guest state if not logged in)
 * `GET /about` - About/features page
 * `GET /login` - Login page
 * `GET /signup` - Signup page
@@ -225,9 +228,20 @@ npm start
 
 ## 📸 Screenshots
 
-* **Home Page:** URL shortening form with recent links table and action buttons
-* **Dashboard:** Personalized view with quick actions and modern gradient design
-* **Analytics:** Interactive charts, geographic heatmap, and detailed visitor insights
+### Home Page
+![Home Page](screenshots/Home.png)
+
+### Dashboard
+![Dashboard](screenshots/Dashboard.png)
+
+### Analytics — Charts & Trends
+![Analytics Charts](screenshots/analytics1.png)
+
+### Analytics — Map & Activity
+![Analytics Map](screenshots/analytics2.png)
+
+### Login Page
+![Login Page](screenshots/Login.png)
 
 ---
 
@@ -245,7 +259,7 @@ Contributions are welcome! Please follow these steps:
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the LICENCE file for details.
 
 ---
 
@@ -262,7 +276,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 * [Chart.js](https://www.chartjs.org/) - Beautiful, responsive charts
 * [Leaflet.js](https://leafletjs.com/) - Interactive maps
 * [Phosphor Icons](https://phosphoricons.com/) - Flexible icon library
-* [ipinfo.io](https://ipinfo.io/) - IP geolocation API
+* [ip-api.com](http://ip-api.com/) - IP geolocation API (free, no key required)
 
 ---
 

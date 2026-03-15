@@ -32,20 +32,21 @@ async function getGeolocation(ip) {
         }
 
         const city = data.city || 'Unknown';
-        const region = data.region || 'Unknown';
+        const regionCode = data.region || 'Unknown';
+        const country = data.country || 'Unknown';
 
         let location = 'Unknown';
-        if (city !== 'Unknown' && region !== 'Unknown') {
-            location = `${city}, ${region}`;
+        if (city !== 'Unknown' && country !== 'Unknown') {
+            location = `${city}, ${country}`;
         } else {
-            location = data.country || 'Unknown';
+            location = country;
         }
 
         return {
             location,
             latitude: data.lat || 0,
             longitude: data.lon || 0,
-            region: region
+            region: regionCode
         };
 
     } catch (error) {
