@@ -232,13 +232,13 @@ npm start
 ![Home Page](screenshots/Home.png)
 
 ### Dashboard
-![Dashboard](screenshots/Dashboard.png)
+![Dashboard](screenshots/dashboard.png)
 
 ### Analytics — Charts & Trends
-![Analytics Charts](screenshots/Analytics1.png)
+![Analytics Charts](screenshots/analytics1.png)
 
 ### Analytics — Map & Activity
-![Analytics Map](screenshots/Analytics2.png)
+![Analytics Map](screenshots/analytics2.png)
 
 ### Login Page
 ![Login Page](screenshots/Login.png)
