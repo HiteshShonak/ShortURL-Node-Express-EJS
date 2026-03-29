@@ -1,4 +1,4 @@
-/* Home page styles */
+/* Home page styles - Terminal Aesthetic */
 
 /* Form */
 .form-group {
@@ -9,29 +9,34 @@
 input[type="text"] {
   flex: 1;
   padding: 14px 20px;
-  border: 2px solid var(--border);
-  border-radius: 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
   font-size: 1rem;
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   outline: none;
-  background-color: var(--surface);
+  background-color: var(--bg-color);
   transition: all 0.2s;
+  color: var(--text-main);
 }
 
 input[type="text"]:focus {
   border-color: var(--primary);
-  background-color: var(--surface);
-  box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.1);
+  background-color: var(--bg-color);
+  box-shadow: 0 0 0 3px var(--info-light);
+}
+
+input[type="text"]::placeholder {
+  color: var(--text-muted);
 }
 
 button.shorten-btn {
   background-color: var(--primary);
-  color: white;
+  color: #000000;
   border: none;
   padding: 14px 32px;
   border-radius: 12px;
   font-size: 1rem;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
@@ -39,17 +44,17 @@ button.shorten-btn {
 
 button.shorten-btn:hover {
   background-color: var(--primary-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(67, 56, 202, 0.25);
+  transform: none;
+  box-shadow: none;
 }
 
 /* Result box */
 .result-box {
-  background: var(--primary-light);
-  border: 1px solid var(--border);
+  background: var(--info-light);
+  border: 1px solid var(--primary);
   color: var(--primary);
   padding: 16px 20px;
-  border-radius: 12px;
+  border-radius: 4px;
   margin-bottom: 24px;
   font-weight: 500;
   display: flex;
@@ -91,23 +96,39 @@ button.shorten-btn:hover {
   flex-shrink: 0;
 }
 
+.home-share-btn {
+  color: var(--primary);
+  background: var(--info-light);
+  border: 1px solid rgba(0, 212, 255, 0.35);
+}
+
+.home-share-btn:hover {
+  background: rgba(0, 212, 255, 0.22);
+  border-color: var(--primary);
+}
+
 .btn-close {
   text-decoration: none;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--error);
-  background: #FEE2E2;
+  background: transparent;
+  border: 1px solid var(--error);
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
 }
 
 .btn-close:hover {
-  background: #FECACA;
-  color: #B91C1C;
+  background: var(--error-light);
+  color: var(--error);
+  border-color: var(--error);
 }
 
 .copy-feedback {
   display: none;
-  color: var(--success);
+  color: var(--primary);
   font-weight: 600;
   font-size: 0.9rem;
   margin-right: 10px;
@@ -118,7 +139,7 @@ button.shorten-btn:hover {
 h3 {
   margin-bottom: 20px;
   color: var(--text-main);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
 }
 
@@ -126,7 +147,7 @@ h3 {
   overflow-x: auto;
   max-height: 450px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 4px;
 }
 
 table {
@@ -137,7 +158,7 @@ table {
 
 th {
   background: var(--bg-color);
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-weight: 600;
   color: var(--text-muted);
   padding: 14px 16px;
@@ -157,6 +178,7 @@ td {
   color: var(--text-main);
   background: var(--surface);
   vertical-align: middle;
+  font-family: 'Inter', sans-serif;
 }
 
 tr:hover td {
@@ -172,18 +194,21 @@ td[data-label="Short Link"] a {
 .analytics-link {
   text-decoration: none;
   color: var(--primary);
-  background: var(--primary-light);
+  background: transparent;
   padding: 6px 12px;
-  border-radius: 20px;
+  border-radius: 4px;
   font-weight: 600;
   font-size: 0.85rem;
   transition: all 0.2s;
   display: inline-block;
+  border: 1px solid var(--primary);
 }
 
 .analytics-link:hover {
-  background: #C7D2FE;
-  transform: translateY(-1px);
+  background: transparent;
+  transform: none;
+  border-color: var(--primary-hover);
+  color: var(--primary-hover);
 }
 
 /* Modals */
@@ -193,9 +218,9 @@ td[data-label="Short Link"] a {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(13, 13, 18, 0.8);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   z-index: 9999;
   display: flex;
   justify-content: center;
@@ -215,8 +240,8 @@ td[data-label="Short Link"] a {
   width: 90%;
   max-width: 400px;
   padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px var(--border);
   border: 1px solid var(--border);
   transform: scale(0.95);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -230,7 +255,7 @@ td[data-label="Short Link"] a {
 
 .modal-title {
   font-size: 1.25rem;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-weight: 700;
   color: var(--text-main);
   margin-bottom: 10px;
@@ -253,7 +278,7 @@ td[data-label="Short Link"] a {
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  background: var(--bg-color);
+  background: var(--bg-tertiary);
   border: 1px solid var(--border);
   padding: 15px;
   border-radius: 16px;
@@ -265,8 +290,8 @@ td[data-label="Short Link"] a {
 
 .share-option:hover {
   transform: translateY(-3px);
-  border-color: var(--primary);
-  background: var(--primary-light);
+  border-color: rgba(0, 212, 255, 0.55);
+  background: var(--info-light);
 }
 
 .share-option i {
@@ -315,7 +340,7 @@ td[data-label="Short Link"] a {
 }
 
 .modal-close:hover {
-  background: #FEE2E2;
+  background: var(--error-light);
   color: var(--error);
 }
 
@@ -348,13 +373,13 @@ td[data-label="Short Link"] a {
 }
 
 .btn-confirm {
-  background: #FEE2E2;
-  color: #DC2626;
+  background: var(--error-light);
+  color: var(--error);
 }
 
 .btn-confirm:hover {
-  background: #FCA5A5;
-  color: #B91C1C;
+  background: rgba(255, 77, 77, 0.25);
+  color: #ff8f8f;
 }
 
 /* Mobile */

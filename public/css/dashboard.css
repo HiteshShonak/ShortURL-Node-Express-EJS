@@ -1,4 +1,4 @@
-/* Dashboard page */
+/* Dashboard page - Terminal Aesthetic */
 
 .dashboard-body {
   background-color: var(--bg-color);
@@ -47,12 +47,13 @@
 }
 
 h1 {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: clamp(2rem, 5vw, 3rem);
   line-height: 1.1;
   margin-bottom: clamp(12px, 2vw, 16px);
   color: var(--text-main);
   letter-spacing: -1px;
+  font-weight: 700;
 }
 
 h1 .highlight {
@@ -60,7 +61,7 @@ h1 .highlight {
 }
 
 p.subtitle {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: clamp(1rem, 2vw, 1.15rem);
   color: var(--text-muted);
   margin-bottom: clamp(24px, 4vw, 32px);
@@ -77,7 +78,7 @@ p.subtitle {
 .btn {
   padding: clamp(10px, 2vw, 14px) clamp(22px, 4vw, 32px);
   border-radius: 12px;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: clamp(0.9rem, 1.8vw, 1rem);
   font-weight: 600;
   text-decoration: none;
@@ -89,26 +90,27 @@ p.subtitle {
 
 .btn-primary {
   background-color: var(--primary);
-  color: white;
-  box-shadow: 0 4px 12px rgba(67, 56, 202, 0.25);
+  color: #000000;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.35);
   border: none;
 }
 
 .btn-primary:hover {
   background-color: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(67, 56, 202, 0.3);
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
 }
 
 .btn-outline {
   background-color: transparent;
-  color: var(--text-main);
-  border: 2px solid var(--border);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
 }
 
 .btn-outline:hover {
   border-color: var(--text-main);
-  background-color: var(--surface);
+  background-color: transparent;
+  color: var(--text-main);
   transform: translateY(-2px);
 }
 
@@ -118,8 +120,9 @@ p.subtitle {
 }
 
 .btn-logout:hover {
-  background-color: #FEF2F2 !important;
-  border-color: #DC2626 !important;
+  background-color: transparent !important;
+  border-color: var(--error) !important;
+  color: var(--error) !important;
 }
 
 /* Hero illustration */
@@ -133,6 +136,7 @@ p.subtitle {
   width: 100%;
   max-width: 380px;
   animation: float 6s ease-in-out infinite;
+  filter: invert(1) hue-rotate(180deg) brightness(1.1);
 }
 
 /* Tablet */

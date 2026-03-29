@@ -11,7 +11,7 @@ html {
 }
 
 body {
-    font-family: 'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-main);
     min-height: 100vh;
@@ -22,7 +22,8 @@ body {
 
 /* Typography utilities */
 .font-heading {
-    font-family: 'Outfit', 'Segoe UI', sans-serif;
+    font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+    font-weight: 700;
 }
 
 .font-mono {
@@ -30,7 +31,7 @@ body {
 }
 
 .font-body {
-    font-family: 'Plus Jakarta Sans', 'Segoe UI', sans-serif;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
 /* Container */

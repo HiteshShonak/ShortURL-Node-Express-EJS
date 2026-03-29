@@ -113,8 +113,8 @@ function showNotification(message) {
         position: fixed;
         bottom: 30px;
         right: 30px;
-        background: #10b981;
-        color: white;
+        background: #00D084;
+        color: #001019;
         padding: 12px 20px;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

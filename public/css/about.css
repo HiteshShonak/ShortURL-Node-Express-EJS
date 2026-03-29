@@ -1,4 +1,4 @@
-/* About page */
+/* About page - Terminal Aesthetic */
 
 @keyframes fadeInUp {
   from {
@@ -43,16 +43,16 @@
 }
 
 .hero-title {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 3rem;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.1;
   margin-bottom: 20px;
   color: var(--text-main);
 }
 
 .hero-subtitle {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.2rem;
   color: var(--text-muted);
   margin-bottom: 30px;
@@ -67,14 +67,14 @@
 .hero-image svg {
   width: 100%;
   height: auto;
-  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.08));
+  filter: drop-shadow(0 16px 38px rgba(0, 0, 0, 0.45)) drop-shadow(0 0 16px rgba(0, 212, 255, 0.12));
 }
 
 /* Buttons */
 .btn {
   padding: 14px 32px;
   border-radius: 12px;
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1rem;
   font-weight: 600;
   text-decoration: none;
@@ -85,25 +85,27 @@
 
 .btn-primary {
   background-color: var(--primary);
-  color: white;
-  box-shadow: 0 4px 12px rgba(67, 56, 202, 0.25);
+  color: #000000;
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.25);
 }
 
 .btn-primary:hover {
   background-color: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(67, 56, 202, 0.3);
+  box-shadow: 0 8px 16px rgba(0, 212, 255, 0.3);
 }
 
 .btn-white {
-  background: white;
+  background: transparent;
   color: var(--primary);
-  border: 1px solid var(--border);
+  border: 1px solid var(--primary);
 }
 
 .btn-white:hover {
-  background: var(--bg-color);
-  transform: translateY(-2px);
+  background: transparent;
+  transform: none;
+  border-color: var(--primary-hover);
+  color: var(--primary-hover);
 }
 
 /* Features */
@@ -119,15 +121,15 @@
 }
 
 .section-title {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 2.5rem;
-  font-weight: 800;
+  font-weight: 700;
   margin-bottom: 12px;
   color: var(--text-main);
 }
 
 .section-subtitle {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.1rem;
   color: var(--text-muted);
   max-width: 600px;
@@ -209,32 +211,37 @@
 }
 
 .icon-primary {
-  background: var(--primary-light);
+  background: transparent;
   color: var(--primary);
+  border: 1px solid var(--primary);
 }
 
 .icon-success {
-  background: #D1FAE5;
+  background: transparent;
   color: var(--success);
+  border: 1px solid var(--success);
 }
 
 .icon-warning {
-  background: #FEF3C7;
+  background: transparent;
   color: var(--warning);
+  border: 1px solid var(--warning);
 }
 
 .icon-info {
-  background: var(--secondary-light);
-  color: var(--secondary);
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
 }
 
 .icon-secondary {
-  background: var(--secondary-light);
+  background: transparent;
   color: var(--secondary);
+  border: 1px solid var(--secondary);
 }
 
 .feature-title {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.3rem;
   font-weight: 700;
   margin-bottom: 12px;
@@ -242,7 +249,7 @@
 }
 
 .feature-description {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1rem;
   color: var(--text-muted);
   line-height: 1.6;
@@ -288,19 +295,19 @@
   height: 60px;
   border-radius: 50%;
   background: var(--primary);
-  color: white;
-  font-family: 'Outfit', sans-serif;
+  color: #000000;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.5rem;
-  font-weight: 800;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 20px;
-  box-shadow: 0 4px 12px rgba(67, 56, 202, 0.25);
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.25);
 }
 
 .step-title {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.2rem;
   font-weight: 700;
   margin-bottom: 10px;
@@ -308,7 +315,7 @@
 }
 
 .step-description {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 0.95rem;
   color: var(--text-muted);
   line-height: 1.6;
@@ -322,23 +329,37 @@
   background: var(--primary);
   border-radius: 24px;
   text-align: center;
-  color: white;
+  color: #000000;
   animation: fadeInUp 0.8s ease-out;
-  box-shadow: 0 8px 30px rgba(67, 56, 202, 0.25);
+  box-shadow: 0 8px 30px rgba(0, 212, 255, 0.25);
+}
+
+.cta-section .btn-white {
+  background: rgba(13, 13, 18, 0.88);
+  color: var(--text-main);
+  border-color: rgba(230, 230, 240, 0.45);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+.cta-section .btn-white:hover {
+  background: rgba(23, 23, 33, 0.98);
+  color: #ffffff;
+  border-color: rgba(230, 230, 240, 0.7);
+  transform: translateY(-2px);
 }
 
 .cta-title {
-  font-family: 'Outfit', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 2.2rem;
-  font-weight: 800;
+  font-weight: 700;
   margin-bottom: 16px;
 }
 
 .cta-description {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-size: 1.1rem;
   margin-bottom: 30px;
-  opacity: 0.95;
+  opacity: 0.9;
 }
 
 /* Responsive */
