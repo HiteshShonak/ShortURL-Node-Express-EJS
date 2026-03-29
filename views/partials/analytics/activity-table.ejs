@@ -29,32 +29,32 @@
                             <td>
                                 <% if (entry.location && entry.location !== 'Unknown') { %>
                                     <div style="display: flex; align-items: center; gap: 6px;">
-                                        <i class="ph ph-map-pin" style="color: #ef4444;"></i>
+                                        <i class="ph ph-map-pin" style="color: var(--error);"></i>
                                         <span><%= entry.location %></span>
                                     </div>
                                 <% } else { %>
-                                    <span style="color: #9ca3af; font-size: 0.9rem;">Unknown</span>
+                                    <span style="color: var(--text-muted); font-size: 0.9rem;">Unknown</span>
                                 <% } %>
                             </td>
 
                             <td>
                                 <% 
                                     let ref = entry.referrer || 'Direct';
-                                    let badgeColor = '#f3f4f6';
-                                    let textColor = '#4b5563';
+                                    let badgeColor = 'rgba(107, 107, 125, 0.18)';
+                                    let textColor = '#A0A0B8';
                                     let icon = 'ph-link';
                                     
                                     if(ref.toLowerCase().includes('whatsapp')) {
-                                        badgeColor = '#dcfce7'; textColor = '#166534'; icon = 'ph-whatsapp-logo'; ref = 'WhatsApp';
+                                        badgeColor = 'rgba(0, 208, 132, 0.18)'; textColor = '#00D084'; icon = 'ph-whatsapp-logo'; ref = 'WhatsApp';
                                     } else if(ref.toLowerCase().includes('telegram')) {
-                                        badgeColor = '#e0f2fe'; textColor = '#075985'; icon = 'ph-telegram-logo'; ref = 'Telegram';
+                                        badgeColor = 'rgba(0, 212, 255, 0.16)'; textColor = '#00D4FF'; icon = 'ph-telegram-logo'; ref = 'Telegram';
                                     } else if(ref.toLowerCase().includes('linkedin')) {
-                                        badgeColor = '#dbeafe'; textColor = '#1e40af'; icon = 'ph-linkedin-logo'; ref = 'LinkedIn';
+                                        badgeColor = 'rgba(42, 107, 255, 0.18)'; textColor = '#8DB4FF'; icon = 'ph-linkedin-logo'; ref = 'LinkedIn';
                                     } else if(ref.toLowerCase().includes('google')) {
-                                        badgeColor = '#ffedd5'; textColor = '#9a3412'; icon = 'ph-google-logo'; ref = 'Google';
+                                        badgeColor = 'rgba(255, 184, 28, 0.18)'; textColor = '#FFB81C'; icon = 'ph-google-logo'; ref = 'Google';
                                     }
                                 %>
-                                <span style="display: inline-flex; align-items: center; gap: 4px; background: <%= badgeColor %>; color: <%= textColor %>; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-transform: capitalize;">
+                                <span style="display: inline-flex; align-items: center; gap: 4px; background: <%= badgeColor %>; color: <%= textColor %>; border: 1px solid rgba(58, 58, 74, 0.8); padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-transform: capitalize;">
                                     <i class="ph <%= icon %>"></i>
                                     <%= ref %>
                                 </span>
@@ -83,41 +83,41 @@
                                     let osName = entry.os || 'Unknown';
                                     // Default (Gray)
                                     let osIcon = 'ph-laptop';
-                                    let osBg = '#f3f4f6';
-                                    let osColor = '#64748b';
+                                    let osBg = 'rgba(107, 107, 125, 0.18)';
+                                    let osColor = '#A0A0B8';
 
                                     if (osName.includes('Windows')) {
                                         osIcon = 'ph-windows-logo'; 
-                                        osBg = '#e0f2fe'; 
-                                        osColor = '#0369a1'; // Blue
+                                        osBg = 'rgba(0, 212, 255, 0.16)'; 
+                                        osColor = '#00D4FF';
                                     } else if (osName.includes('Android')) {
                                         osIcon = 'ph-android-logo'; 
-                                        osBg = '#dcfce7'; 
-                                        osColor = '#15803d'; // Green
+                                        osBg = 'rgba(0, 208, 132, 0.16)'; 
+                                        osColor = '#00D084';
                                     } else if (osName.includes('iOS') || osName.includes('iPhone') || osName.includes('iPad')) {
                                         osIcon = 'ph-apple-logo'; 
-                                        osBg = '#f3f4f6'; 
-                                        osColor = '#1f2937'; // Dark Gray (Apple)
-                                        osName = 'iOS'; // Clean up name
+                                        osBg = 'rgba(230, 230, 240, 0.14)'; 
+                                        osColor = '#E6E6F0';
+                                        osName = 'iOS';
                                     } else if (osName.includes('Mac') || osName.includes('macOS')) {
                                         osIcon = 'ph-apple-logo'; 
-                                        osBg = '#f3f4f6'; 
-                                        osColor = '#1f2937'; // Dark Gray
+                                        osBg = 'rgba(230, 230, 240, 0.14)'; 
+                                        osColor = '#E6E6F0';
                                         osName = 'macOS';
                                     } else if (osName.includes('Linux')) {
                                         osIcon = 'ph-linux-logo'; 
-                                        osBg = '#ffedd5'; 
-                                        osColor = '#c2410c'; // Orange
+                                        osBg = 'rgba(255, 184, 28, 0.16)'; 
+                                        osColor = '#FFB81C';
                                     }
                                 %>
-                                <span style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; background: <%= osBg %>; color: <%= osColor %>;">
+                                <span style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; border: 1px solid rgba(58, 58, 74, 0.8); background: <%= osBg %>; color: <%= osColor %>;">
                                     <i class="ph <%= osIcon %>" style="font-size: 1.1em;"></i>
                                     <%= osName %>
                                 </span>
                             </td>
 
                             <td>
-                                <span style="font-family: monospace; color: var(--text-muted); background: #f8fafc; padding: 2px 6px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                                <span style="font-family: monospace; color: var(--text-muted); background: #1E1E2B; padding: 2px 6px; border-radius: 4px; border: 1px solid #2A2A35;">
                                     <% 
                                         let ip = entry.ip || 'Unknown';
                                         if(ip.includes('.')) {
@@ -136,7 +136,7 @@
                     <tr>
                         <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">
                             <div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
-                                <i class="ph ph-chart-bar" style="font-size: 2rem; color: #cbd5e1;"></i>
+                                <i class="ph ph-chart-bar" style="font-size: 2rem; color: var(--text-tertiary);"></i>
                                 <span>No data available yet. Share your link to see activity!</span>
                             </div>
                         </td>

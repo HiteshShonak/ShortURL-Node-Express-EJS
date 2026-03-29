@@ -32,14 +32,14 @@ window.updateLegend = function(dataSource, viewMode) {
     if (dataSource === 'activity') {
         // Activity mode - Green to Red
         legendTitle.textContent = 'Activity Intensity';
-        legendGradient.style.background = 'linear-gradient(to right, #10b981, #f59e0b, #ef4444)';
+        legendGradient.style.background = 'linear-gradient(to right, #00D084, #FFB81C, #FF4D4D)';
         legendMin.textContent = '0';
         legendMid.textContent = Math.round(maxTotal / 2);
         legendMax.textContent = maxTotal;
     } else {
-        // Quality mode - Purple to Blue
+        // Quality mode - Cyan to Blue
         legendTitle.textContent = 'Quality Intensity';
-        legendGradient.style.background = 'linear-gradient(to right, #8b5cf6, #ec4899, #4f46e5)';
+        legendGradient.style.background = 'linear-gradient(to right, #1AE0FF, #00D4FF, #2A6BFF)';
         legendMin.textContent = '0';
         legendMid.textContent = Math.round(maxUnique / 2);
         legendMax.textContent = maxUnique;
@@ -54,11 +54,11 @@ window.openViewModeModal = function() {
         radio.checked = radio.value === currentViewMode;
         const label = radio.closest('label');
         if (radio.checked) {
-            label.style.borderColor = '#4f46e5';
-            label.style.background = '#f8fafc';
+            label.style.borderColor = '#00D4FF';
+            label.style.background = 'rgba(0, 212, 255, 0.12)';
         } else {
-            label.style.borderColor = '#e2e8f0';
-            label.style.background = '#fff';
+            label.style.borderColor = '#2A2A35';
+            label.style.background = '#171721';
         }
     });
 
@@ -72,11 +72,11 @@ window.selectViewMode = function(value) {
         radio.checked = radio.value === value;
         const label = radio.closest('label');
         if (radio.value === value) {
-            label.style.borderColor = '#4f46e5';
-            label.style.background = '#f8fafc';
+            label.style.borderColor = '#00D4FF';
+            label.style.background = 'rgba(0, 212, 255, 0.12)';
         } else {
-            label.style.borderColor = '#e2e8f0';
-            label.style.background = '#fff';
+            label.style.borderColor = '#2A2A35';
+            label.style.background = '#171721';
         }
     });
 };
@@ -103,12 +103,12 @@ window.openDataSourceModal = function() {
         radio.checked = radio.value === currentDataSource;
         const label = radio.closest('label');
         if (radio.checked) {
-            const color = radio.value === 'activity' ? '#10b981' : '#8b5cf6';
+            const color = radio.value === 'activity' ? '#00D084' : '#00D4FF';
             label.style.borderColor = color;
-            label.style.background = '#f8fafc';
+            label.style.background = radio.value === 'activity' ? 'rgba(0, 208, 132, 0.14)' : 'rgba(0, 212, 255, 0.12)';
         } else {
-            label.style.borderColor = '#e2e8f0';
-            label.style.background = '#fff';
+            label.style.borderColor = '#2A2A35';
+            label.style.background = '#171721';
         }
     });
 
@@ -122,12 +122,12 @@ window.selectDataSource = function(value) {
         radio.checked = radio.value === value;
         const label = radio.closest('label');
         if (radio.value === value) {
-            const color = value === 'activity' ? '#10b981' : '#8b5cf6';
+            const color = value === 'activity' ? '#00D084' : '#00D4FF';
             label.style.borderColor = color;
-            label.style.background = '#f8fafc';
+            label.style.background = value === 'activity' ? 'rgba(0, 208, 132, 0.14)' : 'rgba(0, 212, 255, 0.12)';
         } else {
-            label.style.borderColor = '#e2e8f0';
-            label.style.background = '#fff';
+            label.style.borderColor = '#2A2A35';
+            label.style.background = '#171721';
         }
     });
 };
@@ -146,25 +146,11 @@ window.closeDataSourceModal = function(e, force) {
     }
 };
 
-// === MAP GUIDE MODAL ===
-window.openMapGuideModal = function() {
-    document.getElementById('mapGuideModal').classList.add('active');
-    document.body.style.overflow = 'hidden';
-};
-
-window.closeMapGuideModal = function(e, force) {
-    if (force || e.target.id === 'mapGuideModal') {
-        document.getElementById('mapGuideModal').classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
-};
-
 // === ESC KEY HANDLER (for all modals) ===
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeViewModeModal(null, true);
         closeDataSourceModal(null, true);
-        closeMapGuideModal(null, true);
     }
 });
 

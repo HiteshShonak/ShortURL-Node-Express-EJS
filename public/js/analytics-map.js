@@ -23,11 +23,11 @@ document.addEventListener("DOMContentLoaded", function() {
     // Minimal legal attribution
     L.control.attribution({
         position: 'bottomright',
-        prefix: '<a href="https://leafletjs.com" style="font-size:8px;color:#94a3b8;">Leaflet</a>'
+        prefix: '<a href="https://leafletjs.com" style="font-size:8px;color:#A0A0B8;">Leaflet</a>'
     }).addTo(map);
     
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
-        attribution: '<a href="https://www.openstreetmap.org/copyright" style="font-size:8px;color:#94a3b8;">OSM</a>',
+        attribution: '<a href="https://www.openstreetmap.org/copyright" style="font-size:8px;color:#A0A0B8;">OSM</a>',
         maxZoom: 19
     }).addTo(map);
 
@@ -43,32 +43,32 @@ document.addEventListener("DOMContentLoaded", function() {
         // ✅ UPDATED POPUP WITH INFO ICON
         const popupContent = `
             <div style="min-width: 200px; font-family: 'Segoe UI', system-ui, sans-serif;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid #e2e8f0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid #2A2A35;">
                     <div style="display: flex; align-items: center; gap: 6px;">
                         <span style="font-size: 16px;">📍</span>
-                        <span style="font-weight: 700; font-size: 15px; color: #1e293b;">${p.location}</span>
-                        <span class="info-icon-trigger" style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: #e0e7ff; color: #4f46e5; border-radius: 50%; font-size: 11px; font-weight: 700; cursor: help; opacity: 0.7; transition: all 0.2s;">ℹ</span>
+                        <span style="font-weight: 700; font-size: 15px; color: #E6E6F0;">${p.location}</span>
+                        <span class="info-icon-trigger" style="display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; background: rgba(0, 212, 255, 0.2); color: #00D4FF; border-radius: 50%; font-size: 11px; font-weight: 700; cursor: help; opacity: 0.7; transition: all 0.2s;">ℹ</span>
                     </div>
                 </div>
                 
                 <div style="display: flex; flex-direction: column; gap: 8px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 13px; color: #64748b; font-weight: 600;">🟢 Activity</span>
-                        <span style="font-size: 16px; font-weight: 700; color: #10b981;">${p.totalClicks}</span>
+                        <span style="font-size: 13px; color: #A0A0B8; font-weight: 600;">🟢 Activity</span>
+                        <span style="font-size: 16px; font-weight: 700; color: #00D084;">${p.totalClicks}</span>
                     </div>
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 13px; color: #64748b; font-weight: 600;">🟣 Quality</span>
-                        <span style="font-size: 16px; font-weight: 700; color: #8b5cf6;">${p.uniqueVisitors}</span>
+                        <span style="font-size: 13px; color: #A0A0B8; font-weight: 600;">🟣 Quality</span>
+                        <span style="font-size: 16px; font-weight: 700; color: #FFB81C;">${p.uniqueVisitors}</span>
                     </div>
                 </div>
                 
-                <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid #f1f5f9;">
+                <div style="margin-top: 6px; padding-top: 8px; border-top: 1px solid #2A2A35;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-size: 12px; color: #64748b; font-weight: 600;">💎 Ratio</span>
-                        <span style="font-size: 14px; font-weight: 700; color: #4f46e5;">${quality}%</span>
+                        <span style="font-size: 12px; color: #A0A0B8; font-weight: 600;">💎 Ratio</span>
+                        <span style="font-size: 14px; font-weight: 700; color: #00D4FF;">${quality}%</span>
                     </div>
-                    <div style="width: 100%; height: 4px; background: #f1f5f9; border-radius: 2px; margin-top: 4px; overflow: hidden;">
-                        <div style="width: ${quality}%; height: 100%; background: linear-gradient(90deg, #8b5cf6, #4f46e5); border-radius: 2px;"></div>
+                    <div style="width: 100%; height: 4px; background: #2A2A35; border-radius: 2px; margin-top: 4px; overflow: hidden;">
+                        <div style="width: ${quality}%; height: 100%; background: linear-gradient(90deg, #00D084, #00D4FF); border-radius: 2px;"></div>
                     </div>
                 </div>
             </div>
@@ -76,8 +76,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
         L.circleMarker([p.lat, p.lng], {
             radius: 8,
-            fillColor: '#4f46e5',
-            color: '#fff',
+            fillColor: '#00D4FF',
+            color: '#0D0D12',
             weight: 2,
             opacity: 1,
             fillOpacity: 0.8
@@ -135,19 +135,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
         const gradient = isActivity ? {
-            0.0: '#10b981',   // Green (low)
-            0.2: '#84cc16',   // Light green
-            0.4: '#fbbf24',   // Yellow
-            0.6: '#f59e0b',   // Orange
-            0.8: '#f97316',   // Dark orange
-            1.0: '#ef4444'    // Red (high)
+            0.0: '#00D084',
+            0.2: '#4BE0A8',
+            0.4: '#FFB81C',
+            0.6: '#FF9F1A',
+            0.8: '#FF7043',
+            1.0: '#FF4D4D'
         } : {
-            0.0: '#8b5cf6',   // Purple
-            0.2: '#a78bfa',
-            0.4: '#c084fc',   // Light purple
-            0.6: '#ec4899',   // Pink
-            0.8: '#6366f1',   // Indigo
-            1.0: '#4f46e5'    // Blue
+            0.0: '#1AE0FF',
+            0.2: '#00D4FF',
+            0.4: '#00B8FF',
+            0.6: '#2A9DFF',
+            0.8: '#2A6BFF',
+            1.0: '#1D4ED8'
         };
 
         return L.heatLayer(heatmapData, {
@@ -198,7 +198,7 @@ document.addEventListener("DOMContentLoaded", function() {
             arrow.style.left = '-6px';
             arrow.style.top = '50%';
             arrow.style.transform = 'translateY(-50%)';
-            arrow.style.borderRight = '6px solid #1e293b';
+            arrow.style.borderRight = '6px solid #171721';
             arrow.style.borderTop = '6px solid transparent';
             arrow.style.borderBottom = '6px solid transparent';
             arrow.style.borderLeft = 'none';
@@ -209,8 +209,8 @@ document.addEventListener("DOMContentLoaded", function() {
             
             // Highlight icon
             icon.style.opacity = '1';
-            icon.style.background = '#4f46e5';
-            icon.style.color = 'white';
+            icon.style.background = '#00D4FF';
+            icon.style.color = '#001019';
         }
     });
 
@@ -227,8 +227,8 @@ document.addEventListener("DOMContentLoaded", function() {
             
             // Reset icon style
             icon.style.opacity = '0.7';
-            icon.style.background = '#e0e7ff';
-            icon.style.color = '#4f46e5';
+            icon.style.background = 'rgba(0, 212, 255, 0.2)';
+            icon.style.color = '#00D4FF';
         }
     });
 
@@ -282,19 +282,19 @@ window.updateHeatmapData = function(source) {
     }
 
     const gradient = isActivity ? {
-        0.0: '#10b981',
-        0.2: '#84cc16',
-        0.4: '#fbbf24',
-        0.6: '#f59e0b',
-        0.8: '#f97316',
-        1.0: '#ef4444'
+        0.0: '#00D084',
+        0.2: '#4BE0A8',
+        0.4: '#FFB81C',
+        0.6: '#FF9F1A',
+        0.8: '#FF7043',
+        1.0: '#FF4D4D'
     } : {
-        0.0: '#8b5cf6',
-        0.2: '#a78bfa',
-        0.4: '#c084fc',
-        0.6: '#ec4899',
-        0.8: '#6366f1',
-        1.0: '#4f46e5'
+        0.0: '#1AE0FF',
+        0.2: '#00D4FF',
+        0.4: '#00B8FF',
+        0.6: '#2A9DFF',
+        0.8: '#2A6BFF',
+        1.0: '#1D4ED8'
     };
 
     window.heatLayer = L.heatLayer(heatmapData, {

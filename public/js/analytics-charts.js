@@ -1,7 +1,7 @@
 // Chart setup
 document.addEventListener("DOMContentLoaded", function () {
-    Chart.defaults.font.family = "'Plus Jakarta Sans', 'Segoe UI', system-ui, sans-serif";
-    Chart.defaults.color = '#475569';
+    Chart.defaults.font.family = "'Inter', 'Segoe UI', system-ui, sans-serif";
+    Chart.defaults.color = '#A0A0B8';
 
     const trendLabelsData = trendLabels;
     const trendDataValues = trendData;
@@ -19,8 +19,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // Line chart
     const ctx = document.getElementById('clickChart').getContext('2d');
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(67, 56, 202, 0.4)');
-    gradient.addColorStop(1, 'rgba(67, 56, 202, 0.0)');
+    gradient.addColorStop(0, 'rgba(0, 212, 255, 0.22)');
+    gradient.addColorStop(1, 'rgba(0, 212, 255, 0.02)');
 
     new Chart(ctx, {
         type: 'line',
@@ -29,11 +29,11 @@ document.addEventListener("DOMContentLoaded", function () {
             datasets: [{
                 label: 'Clicks',
                 data: trendDataValues,
-                borderColor: '#4338CA',
+                borderColor: '#00D4FF',
                 backgroundColor: gradient,
                 borderWidth: 3,
-                pointBackgroundColor: '#fff',
-                pointBorderColor: '#4338CA',
+                pointBackgroundColor: '#0D0D12',
+                pointBorderColor: '#00D4FF',
                 pointRadius: 5,
                 pointHoverRadius: 7,
                 fill: true,
@@ -46,23 +46,25 @@ document.addEventListener("DOMContentLoaded", function () {
             plugins: {
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: '#0F172A',
-                    titleColor: '#fff',
-                    bodyColor: '#fff',
+                    backgroundColor: '#171721',
+                    titleColor: '#E6E6F0',
+                    bodyColor: '#E6E6F0',
                     padding: 12,
-                    cornerRadius: 8,
-                    displayColors: false
+                    cornerRadius: 4,
+                    displayColors: false,
+                    borderColor: '#2A2A35',
+                    borderWidth: 1
                 }
             },
             scales: {
                 y: {
                     beginAtZero: true,
-                    grid: { borderDash: [5, 5], color: '#F1F5F9', drawBorder: false },
-                    ticks: { font: { weight: '600' } }
+                    grid: { borderDash: [5, 5], color: '#2A2A35', drawBorder: false },
+                    ticks: { font: { weight: '600' }, color: '#A0A0B8' }
                 },
                 x: {
                     grid: { display: false },
-                    ticks: { font: { weight: '500' } }
+                    ticks: { font: { weight: '500' }, color: '#A0A0B8' }
                 }
             }
         }
@@ -75,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function () {
             labels: ['Desktop', 'Mobile', 'Tablet', 'Bot'],
             datasets: [{
                 data: deviceData,
-                backgroundColor: ['#4338CA', '#0EA5E9', '#6366F1', '#94A3B8'],
+                backgroundColor: ['#00D4FF', '#FFB81C', '#00D084', '#2A2A35'],
                 borderWidth: 0,
                 hoverOffset: 6
             }]
@@ -87,9 +89,9 @@ document.addEventListener("DOMContentLoaded", function () {
             plugins: {
                 legend: {
                     position: 'bottom',
-                    labels: { usePointStyle: true, padding: 15, font: { weight: '600' } }
+                    labels: { usePointStyle: true, padding: 15, font: { weight: '600' }, color: '#A0A0B8' }
                 },
-                tooltip: { backgroundColor: '#0F172A', padding: 12, cornerRadius: 8 }
+                tooltip: { backgroundColor: '#171721', padding: 12, cornerRadius: 4, titleColor: '#E6E6F0', bodyColor: '#E6E6F0', borderColor: '#2A2A35', borderWidth: 1 }
             }
         }
     });
@@ -103,16 +105,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 {
                     label: 'Total Clicks',
                     data: hourlyDataLocal,
-                    backgroundColor: 'rgba(14, 165, 233, 0.8)',
-                    borderRadius: 6,
+                    backgroundColor: 'rgba(0, 212, 255, 0.8)',
+                    borderRadius: 4,
                     borderSkipped: false,
                     order: 2
                 },
                 {
                     label: 'Unique Visitors',
                     data: hourlyUniqueLocal,
-                    backgroundColor: 'rgba(67, 56, 202, 0.9)',
-                    borderRadius: 6,
+                    backgroundColor: 'rgba(255, 184, 28, 0.8)',
+                    borderRadius: 4,
                     borderSkipped: false,
                     order: 1
                 }
@@ -127,19 +129,21 @@ document.addEventListener("DOMContentLoaded", function () {
                     display: true,
                     position: 'top',
                     align: 'end',
-                    labels: { usePointStyle: true, pointStyle: 'circle', padding: 15, font: { size: 12, weight: '600' } }
+                    labels: { usePointStyle: true, pointStyle: 'circle', padding: 15, font: { size: 12, weight: '600' }, color: '#A0A0B8' }
                 },
                 tooltip: {
                     mode: 'index',
                     intersect: false,
-                    backgroundColor: '#0F172A',
+                    backgroundColor: '#171721',
                     padding: 14,
                     titleFont: { size: 14, weight: 'bold' },
                     bodyFont: { size: 13 },
                     bodySpacing: 6,
-                    borderColor: 'rgba(148, 163, 184, 0.3)',
+                    borderColor: '#2A2A35',
                     borderWidth: 1,
-                    cornerRadius: 8,
+                    cornerRadius: 4,
+                    titleColor: '#E6E6F0',
+                    bodyColor: '#E6E6F0',
                     callbacks: {
                         title: (ctx) => `Hour ${ctx[0].label}`,
                         label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y}`,
@@ -154,8 +158,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             },
             scales: {
-                x: { stacked: false, grid: { display: false }, ticks: { font: { size: 10, weight: '500' }, color: '#64748B' } },
-                y: { beginAtZero: true, stacked: false, grid: { color: 'rgba(241, 245, 249, 0.8)', drawBorder: false }, ticks: { precision: 0, font: { size: 11, weight: '500' }, color: '#64748B' } }
+                x: { stacked: false, grid: { display: false }, ticks: { font: { size: 10, weight: '500' }, color: '#A0A0B8' } },
+                y: { beginAtZero: true, stacked: false, grid: { color: '#2A2A35', drawBorder: false }, ticks: { precision: 0, font: { size: 11, weight: '500' }, color: '#A0A0B8' } }
             },
             datasets: { bar: { barPercentage: 0.9, categoryPercentage: 0.8 } },
             grouped: false
@@ -170,8 +174,8 @@ document.addEventListener("DOMContentLoaded", function () {
             datasets: [{
                 label: 'Visits',
                 data: sourceDataValues,
-                backgroundColor: '#0EA5E9',
-                borderRadius: 6,
+                backgroundColor: '#00D4FF',
+                borderRadius: 4,
                 barThickness: 20
             }]
         },
@@ -181,11 +185,11 @@ document.addEventListener("DOMContentLoaded", function () {
             maintainAspectRatio: false,
             plugins: {
                 legend: { display: false },
-                tooltip: { backgroundColor: '#0F172A', padding: 12, cornerRadius: 8 }
+                tooltip: { backgroundColor: '#171721', padding: 12, cornerRadius: 4, titleColor: '#E6E6F0', bodyColor: '#E6E6F0', borderColor: '#2A2A35', borderWidth: 1 }
             },
             scales: {
-                x: { grid: { display: false }, ticks: { font: { weight: '500' } } },
-                y: { grid: { display: false }, ticks: { font: { weight: '600' } } }
+                x: { grid: { color: '#2A2A35' }, ticks: { font: { weight: '500' }, color: '#A0A0B8' } },
+                y: { grid: { display: false }, ticks: { font: { weight: '600' }, color: '#A0A0B8' } }
             }
         }
     });
@@ -200,7 +204,7 @@ function renderGeoList(data, containerId) {
     const container = document.getElementById(containerId);
 
     if (data.length === 0) {
-        container.innerHTML = '<div style="padding: 20px; text-align: center; color: #94a3b8;">No data available</div>';
+        container.innerHTML = '<div style="padding: 20px; text-align: center; color: #A0A0B8;">No data available</div>';
         return;
     }
 

@@ -21,7 +21,7 @@ function openModal(type) {
     mUnique.innerText = data.unique;
     mIcon.className = `ph ${data.icon}`;
     mIconBg.style.color = data.color;
-    mIconBg.style.background = type === 'total' ? '#e0e7ff' : '#dcfce7';
+    mIconBg.style.background = type === 'total' ? 'rgba(0, 212, 255, 0.14)' : 'rgba(0, 208, 132, 0.14)';
     mRaw.style.color = data.color;
 
     const ratio = data.raw > 0 ? Math.round((data.unique / data.raw) * 100) : 0;
