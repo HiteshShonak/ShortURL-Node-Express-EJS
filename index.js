@@ -2,11 +2,13 @@
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
 
 const config = require('./config');
 const { connectToDatabase } = require('./connection');
 const { checkAuthentication } = require('./middleware/auth');
 const { errorHandler } = require('./middleware/errorHandler');
+const { globalLimiter } = require('./middleware/security');
 
 // Routes
 const urlRoute = require('./routes/url');
@@ -15,8 +17,7 @@ const userRoute = require('./routes/user');
 
 const app = express();
 
-// Database connection
-connectToDatabase(config.mongoUrl);
+app.set('trust proxy', config.trustProxy);
 
 // View engine
 app.set('view engine', 'ejs');
@@ -27,6 +28,17 @@ app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false
+}));
+app.use(globalLimiter);
+
+app.use((req, res, next) => {
+  const origin = `${req.protocol}://${req.get('host')}`;
+  res.locals.baseUrl = config.appBaseUrl || origin;
+  next();
+});
 
 // Health check
 app.get('/api/ping', (req, res) => {
@@ -45,7 +57,16 @@ app.use('/', staticRoute);
 // Error handling (must be last)
 app.use(errorHandler);
 
-// Start server
-app.listen(config.port, () => {
-  console.log(`Server Started on port ${config.port}`);
-});
+async function startServer() {
+  try {
+    await connectToDatabase(config.mongoUrl);
+    app.listen(config.port, () => {
+      console.log(`Server Started on port ${config.port}`);
+    });
+  } catch (error) {
+    console.error('Unable to start server:', error.message);
+    process.exit(1);
+  }
+}
+
+startServer();
