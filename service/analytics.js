@@ -2,6 +2,7 @@
 const URLModel = require('../models/url');
 const { getOSType, getDeviceType, getReferrerSource } = require('../utils/analytics');
 const { getClientIP, getGeolocation } = require('../utils/geolocation');
+const config = require('../config');
 
 async function trackVisit(shortId, req) {
     const userAgentString = req.headers['user-agent'] || '';
@@ -29,7 +30,14 @@ async function trackVisit(shortId, req) {
 
     await URLModel.findOneAndUpdate(
         { shortId },
-        { $push: { visitHistory: visitEntry } }
+        {
+            $push: {
+                visitHistory: {
+                    $each: [visitEntry],
+                    $slice: -config.visitHistoryLimit
+                }
+            }
+        }
     );
 }
 

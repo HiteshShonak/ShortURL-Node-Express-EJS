@@ -8,24 +8,54 @@ const { trackVisit } = require('../service/analytics');
 const config = require('../config');
 const { ERROR_MESSAGES } = require('../config/constants');
 
+function normalizeAndValidateUrl(input) {
+    if (typeof input !== 'string') {
+        return { error: ERROR_MESSAGES.URL_REQUIRED };
+    }
+
+    let normalizedUrl = input.trim();
+    if (!normalizedUrl) {
+        return { error: ERROR_MESSAGES.URL_REQUIRED };
+    }
+
+    if (!/^https?:\/\//i.test(normalizedUrl)) {
+        normalizedUrl = `https://${normalizedUrl}`;
+    }
+
+    try {
+        const parsedUrl = new URL(normalizedUrl);
+        if (!['http:', 'https:'].includes(parsedUrl.protocol) || !parsedUrl.hostname) {
+            return { error: ERROR_MESSAGES.URL_INVALID };
+        }
+
+        if (parsedUrl.href.length > 2048) {
+            return { error: ERROR_MESSAGES.URL_INVALID };
+        }
+
+        return { url: parsedUrl.href };
+    } catch (_) {
+        return { error: ERROR_MESSAGES.URL_INVALID };
+    }
+}
+
 // Generate short URL
 async function handleGenerateNewShortUrl(req, res) {
     try {
-        const body = req.body;
-        if (!body || !body.url) {
-            return res.status(400).json({ error: ERROR_MESSAGES.URL_REQUIRED });
+        if (!req.user || !req.user._id) {
+            return res.status(401).json({ error: ERROR_MESSAGES.UNAUTHORIZED });
         }
 
-        let originalUrl = body.url.trim();
-        if (!/^https?:\/\//i.test(originalUrl)) {
-            originalUrl = 'https://' + originalUrl;
+        const body = req.body;
+        const urlResult = normalizeAndValidateUrl(body?.url);
+        if (urlResult.error) {
+            return res.status(400).json({ error: urlResult.error });
         }
 
         const shortId = nanoid(config.shortIdLength);
 
         await URLModel.create({
             shortId: shortId,
-            redirectUrl: originalUrl,
+            redirectUrl: urlResult.url,
             visitHistory: [],
             createdBy: req.user._id
         });

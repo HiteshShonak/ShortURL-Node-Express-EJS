@@ -1,6 +1,7 @@
 /* Geolocation utilities */
 const requestIp = require('request-ip');
 const axios = require('axios');
+const config = require('../config');
 
 function getClientIP(req) {
     const xForwardedFor = req.headers['x-forwarded-for'];
@@ -20,11 +21,11 @@ function getClientIP(req) {
 async function getGeolocation(ip) {
     // Fallback for localhost development
     if (ip === '127.0.0.1' || ip === '::1') {
-        ip = '110.227.199.146';
+        ip = config.localhostFallbackIP;
     }
 
     try {
-        const response = await axios.get(`http://ip-api.com/json/${ip}`);
+        const response = await axios.get(`${config.geoApiUrl}/${ip}`, { timeout: 5000 });
         const data = response.data;
 
         if (data.status === 'fail') {

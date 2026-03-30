@@ -1,19 +1,20 @@
 const express = require('express');
 const URL = require('../models/url');
 const { restrictTo } = require('../middleware/auth');
-const { getUser } = require("../service/auth");
 const router = express.Router();
 
 
 router.get('/', async (req, res) => {
     if (!req.user) {
-        return res.render('home', { page: 'home', urls: [], id: null });
+        return res.render('home', { page: 'home', urls: [], id: null, user: null });
     }
 
     else {
-        const allUrls = await URL.find({ createdBy: req.user._id });
+        const allUrls = await URL.find({ createdBy: req.user._id })
+            .sort({ createdAt: -1 })
+            .limit(200);
         const generatedId = req.query.generated;
-        res.render('home', { page: 'home', urls: allUrls, id: generatedId });
+        res.render('home', { page: 'home', urls: allUrls, id: generatedId, user: req.user });
     }
 
 });
@@ -24,20 +25,20 @@ router.get('/admin', restrictTo(['ADMIN']), async (req, res) => {
     }
 
     else {
-        const allUrls = await URL.find({}).populate("createdBy");
+        const allUrls = await URL.find({})
+            .populate('createdBy')
+            .sort({ createdAt: -1 })
+            .limit(500);
         const generatedId = req.query.generated;
-        res.render('home', { urls: allUrls, id: generatedId, user: req.user, isAdmin: true });
+        res.render('home', { page: 'home', urls: allUrls, id: generatedId, user: req.user, isAdmin: true });
     }
 
 });
 
 router.get('/dashboard', (req, res) => {
-    const userUid = req.cookies?.uid;
-    const currentUser = getUser(userUid);
-
     res.render('dashboard', {
         page: 'dashboard',
-        user: currentUser
+        user: req.user || null
     });
 });
 
