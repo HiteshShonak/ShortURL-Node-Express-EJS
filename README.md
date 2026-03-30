@@ -40,7 +40,9 @@ A modern URL shortener built with **Node.js**, **Express**, and **MongoDB**. Fea
 
 ### Security
 - **Bcrypt Password Hashing:** All user passwords are securely hashed using bcrypt.
-- **JWT & Cookie Security:** Secure, stateless authentication with JWT. Sessions persist for 7 days using `httpOnly`, `sameSite: lax` cookies.
+- **JWT & Cookie Security:** Secure, stateless authentication with JWT. Sessions persist for 7 days using `httpOnly` cookies with environment-aware `secure` and `sameSite` settings.
+- **Rate Limiting:** Request throttling on global traffic and auth endpoints to reduce abuse and brute-force attempts.
+- **Secure Headers:** HTTP security headers enabled with Helmet.
 - **Environment Variables:** Sensitive data is managed via environment variables.
 
 ### User Experience
@@ -64,6 +66,8 @@ A modern URL shortener built with **Node.js**, **Express**, and **MongoDB**. Fea
 - **JWT** - JSON Web Tokens for authentication
 - **bcrypt** - Password hashing
 - **Cookie-Parser** - Cookie handling
+- **Helmet** - Security headers
+- **Express Rate Limit** - Request throttling
 
 ### Frontend
 - **EJS** - Embedded JavaScript Templates
@@ -84,12 +88,16 @@ A modern URL shortener built with **Node.js**, **Express**, and **MongoDB**. Fea
 
 ```
 url-shortener/
+├── config/
+│   ├── constants.js              # App constants and shared messages
+│   └── index.js                  # Centralized environment/config loader
 ├── controllers/
 │   ├── url.js                    # URL business logic
 │   └── user.js                   # User business logic
 ├── middleware/
 │   ├── auth.js                   # Authentication & authorization middleware
-│   └── errorHandler.js           # Global error handling
+│   ├── errorHandler.js           # Global error handling
+│   └── security.js               # Helmet + rate limit middleware
 ├── models/
 │   ├── url.js                    # MongoDB schema for URLs
 │   └── user.js                   # MongoDB schema for users
@@ -98,32 +106,66 @@ url-shortener/
 │   ├── url.js                    # URL shortening routes
 │   └── user.js                   # Authentication routes
 ├── service/
+│   ├── analytics.js              # Visit tracking service
 │   └── auth.js                   # JWT service functions
+├── utils/
+│   ├── analytics.js              # User-agent and source helpers
+│   ├── errors.js                 # Error utility helpers
+│   ├── formatters.js             # Data formatting helpers
+│   ├── geolocation.js            # IP + geo helpers
+│   └── locationMap.js            # State/country mapping data
 ├── public/
 │   ├── css/
-│   │   ├── home.css              # Home page styles
-│   │   ├── dashboard.css         # Dashboard styles
-│   │   ├── analytics.css         # Analytics page styles
-│   │   └── about.css             # About page styles
+│   │   ├── about.css
+│   │   ├── analytics.css
+│   │   ├── auth.css
+│   │   ├── base.css
+│   │   ├── common.css
+│   │   ├── components.css
+│   │   ├── dashboard.css
+│   │   ├── home.css
+│   │   ├── login.css
+│   │   ├── navbar.css
+│   │   ├── signup.css
+│   │   └── variables.css
 │   └── js/
-│       ├── home-modals.js        # Home page modals
-│       ├── analytics-main.js     # Analytics initialization
-│       ├── analytics-charts.js   # Chart.js charts
-│       ├── analytics-map.js      # Leaflet heatmap
-│       ├── analytics-geo.js      # Geographic data
-│       ├── analytics-modals.js   # Analytics modals
-│       └── about.js              # About page animations
+│       ├── about.js
+│       ├── analytics-charts.js
+│       ├── analytics-geo.js
+│       ├── analytics-main.js
+│       ├── analytics-map.js
+│       ├── analytics-modals.js
+│       └── home-modals.js
 ├── views/
-│   ├── home.ejs                  # Home/shortening page
-│   ├── dashboard.ejs             # User dashboard
-│   ├── analytics.ejs             # Analytics page
-│   ├── about.ejs                 # About/features page
-│   ├── signup.ejs                # Registration page
-│   └── login.ejs                 # Login page
+│   ├── partials/
+│   │   ├── analytics/
+│   │   │   ├── activity-table.ejs
+│   │   │   ├── chart-card.ejs
+│   │   │   ├── geo-list.ejs
+│   │   │   ├── header.ejs
+│   │   │   ├── map-section.ejs
+│   │   │   ├── modals.ejs
+│   │   │   └── stat-card.ejs
+│   │   └── navbar.ejs
+│   ├── about.ejs
+│   ├── analytics.ejs
+│   ├── dashboard.ejs
+│   ├── home.ejs
+│   ├── login.ejs
+│   └── signup.ejs
+├── screenshots/
+│   ├── analytics1.png
+│   ├── analytics2.png
+│   ├── dashboard.png
+│   ├── Home.png
+│   └── Login.png
 ├── connection.js                 # MongoDB connection
 ├── index.js                      # Server entry point
 ├── package.json                  # Dependencies
-└── .env                          # Environment variables
+├── README.md
+├── .env.sample
+├── .env                          # Environment variables (local)
+└── LICENCE
 ```
 
 ---
@@ -149,9 +191,18 @@ npm install
 2. Create a `.env` file in the root directory:
 
 ```env
+NODE_ENV=development
 PORT=8000
 MONGO_URL=mongodb://localhost:27017/short-url
 JWT_SECRET=your_super_secret_key_here
+APP_BASE_URL=http://localhost:8000
+TRUST_PROXY=false
+COOKIE_SECURE=false
+COOKIE_SAME_SITE=lax
+RATE_LIMIT_WINDOW_MINUTES=15
+RATE_LIMIT_MAX_REQUESTS=1200
+AUTH_RATE_LIMIT_MAX=10
+VISIT_HISTORY_LIMIT=5000
 ```
 
 3. Start the application:
@@ -220,9 +271,18 @@ npm start
 
 | Variable | Description | Required |
 |----------|-------------|----------|
+| `NODE_ENV` | Runtime mode (`development` or `production`) | No |
 | `PORT` | Server port (default: 8000) | No |
 | `MONGO_URL` | MongoDB connection string | Yes |
 | `JWT_SECRET` | Secret key for JWT encryption | Yes |
+| `APP_BASE_URL` | Public app base URL used for generated links | No |
+| `TRUST_PROXY` | Enable Express proxy trust when behind reverse proxy | No |
+| `COOKIE_SECURE` | Force secure auth cookie (`true`/`false`) | No |
+| `COOKIE_SAME_SITE` | Auth cookie `sameSite` policy (default: `lax`) | No |
+| `RATE_LIMIT_WINDOW_MINUTES` | Global/auth limiter window in minutes | No |
+| `RATE_LIMIT_MAX_REQUESTS` | Max requests per IP per limiter window | No |
+| `AUTH_RATE_LIMIT_MAX` | Max failed auth attempts per window | No |
+| `VISIT_HISTORY_LIMIT` | Max analytics entries stored per short link | No |
 
 ---
 
